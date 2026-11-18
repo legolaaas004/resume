@@ -641,7 +641,8 @@ textarea#jd { min-height: 62px; resize: vertical; }
   .topbar #modeBadge { order: 4; }
   .topbar #themeSelect { order: 5; }
   .topbar .spacer { display: none; }
-  .topbar #btnExportTop { display: none !important; }
+  .topbar #btnExportTop,
+  .topbar #btnTrackTop { display: none !important; }
   .card { padding: 11px 12px; }
   .group-body { padding: 9px 12px 11px; }
   .tracker-toolbar .input { flex: 1 1 100%; }
@@ -841,6 +842,8 @@ textarea.field-input:focus,
 
 .btn { box-shadow: none; }
 
+.missing-link { color: var(--warn); font-size: 12px; }
+
 </style>
 </head>
 <body>
@@ -858,6 +861,7 @@ textarea.field-input:focus,
     <option value="light">浅色</option>
     <option value="dark">深色</option>
   </select>
+  <button class="btn small" id="btnTrackTop" type="button">加入投递跟踪</button>
   <button class="btn small primary" id="btnExportTop">导出</button>
 </header>
 
@@ -886,8 +890,13 @@ textarea.field-input:focus,
         <input class="input" id="keywords" placeholder="例如：数据分析, SQL, 用户增长, 跨部门协作" autocomplete="off">
       </label>
       <label style="display:block;margin-top:10px">
+        <span class="field-label">工作来源链接 *（用于投递跟踪）</span>
+        <input class="input" id="source" placeholder="https://… 招聘页面 / JD 链接" autocomplete="off">
+      </label>
+      <div class="hint" id="sourceHint">导出不强制填；但点「加入投递跟踪」时必须填这一项。</div>
+      <label style="display:block;margin-top:10px">
         <span class="field-label">备注（可选，只写进投递台账）</span>
-        <input class="input" id="note" placeholder="例如：JD 链接 / 内推人 / 投递渠道" autocomplete="off">
+        <input class="input" id="note" placeholder="例如：内推人 / 投递渠道" autocomplete="off">
       </label>
       <div class="actions-row" style="margin-top:12px">
         <button class="btn primary" id="btnGenerate" type="button">一键生成修改版</button>
@@ -1029,8 +1038,8 @@ textarea.field-input:focus,
         <input class="input" id="trChannel" placeholder="官网 / Boss / 内推" autocomplete="off">
       </label>
       <label style="grid-column:1/-1">
-        <span class="field-label">链接</span>
-        <input class="input" id="trLink" placeholder="JD 链接 / 投递记录链接" autocomplete="off">
+        <span class="field-label">工作来源链接 *</span>
+        <input class="input" id="trLink" placeholder="https://… 招聘页面 / JD 链接" autocomplete="off">
       </label>
       <label style="grid-column:1/-1">
         <span class="field-label">备注</span>
@@ -1055,7 +1064,21 @@ textarea.field-input:focus,
     </div>
     <div class="hint" style="margin-bottom:12px">
       「一键生成修改版」需要一个 OpenAI 兼容接口。Key 只保存在你自己的浏览器（localStorage），不会写进网站源码；
-      换浏览器/换电脑需要重填。DeepSeek 默认地址 <code>https://api.deepseek.com/chat/completions</code>、模型 <code>deepseek-chat</code>。
+      换浏览器/换电脑需要重填。DeepSeek 当前基础模型是 <code>deepseek-flash</code>（快、便宜），更强的是 <code>deepseek-v4-pro</code>；
+      旧的 <code>deepseek-chat</code> 可能已不可用。
+    </div>
+    <label style="display:block;margin-bottom:10px">
+      <span class="field-label">快速填充（可选）</span>
+      <select class="input" id="aiPreset">
+        <option value="">自定义</option>
+        <option value="deepseek">DeepSeek（付费，默认）</option>
+        <option value="openrouter">OpenRouter 免费模型</option>
+        <option value="ollama">本地 Ollama（真免费，仅建议本机版）</option>
+      </select>
+    </label>
+    <div class="hint" style="margin:-2px 0 10px">
+      OpenRouter 免费模型有频率限制；如果提示 “No endpoints found”，去 OpenRouter 设置里开启免费模型的数据策略。
+      本地 Ollama 需要先安装并 pull 一个模型，且 GitHub Pages（https）直连 localhost 可能被浏览器拦截，建议用本机版。
     </div>
     <label style="display:block;margin-bottom:10px">
       <span class="field-label">接口地址（OpenAI 兼容 chat/completions）</span>
@@ -1063,7 +1086,11 @@ textarea.field-input:focus,
     </label>
     <label style="display:block;margin-bottom:10px">
       <span class="field-label">模型</span>
-      <input class="input" id="aiModel" placeholder="deepseek-chat" autocomplete="off">
+      <input class="input" id="aiModel" placeholder="deepseek-flash" list="aiModelList" autocomplete="off">
+      <datalist id="aiModelList">
+        <option value="deepseek-flash">DeepSeek 基础版（快、便宜）</option>
+        <option value="deepseek-v4-pro">DeepSeek 更强版（慢、贵）</option>
+      </datalist>
     </label>
     <label style="display:block;margin-bottom:10px">
       <span class="field-label">API Key</span>
@@ -1937,6 +1964,13 @@ textarea.field-input:focus,
     return String(value == null ? '' : value).trim();
   }
 
+  function normalizeLink(value) {
+    var s = text(value);
+    if (!s) return '';
+    if (!/^https?:\/\//i.test(s)) s = 'https://' + s;
+    return s;
+  }
+
   function normalize(rec) {
     rec = rec || {};
     return {
@@ -1947,7 +1981,7 @@ textarea.field-input:focus,
       salary: text(rec.salary),
       date: text(rec.date),
       channel: text(rec.channel),
-      link: text(rec.link),
+      link: normalizeLink(rec.link),
       note: text(rec.note),
       updatedAt: text(rec.updatedAt) || now()
     };
@@ -2109,6 +2143,7 @@ textarea.field-input:focus,
     today: today,
     now: now,
     normalize: normalize,
+    normalizeLink: normalizeLink,
     load: load,
     save: save,
     stats: stats,
@@ -2251,8 +2286,13 @@ textarea.field-input:focus,
         a.rel = 'noopener';
         a.textContent = r.link.replace(/^https?:\/\//, '').slice(0, 42);
         tdNote.appendChild(a);
+      } else {
+        var missingLink = document.createElement('span');
+        missingLink.className = 'missing-link';
+        missingLink.textContent = '缺工作来源链接';
+        tdNote.appendChild(missingLink);
       }
-      if (!r.note && !r.link) tdNote.textContent = '—';
+      if (!r.note && !r.link) tdNote.textContent = '缺工作来源链接';
       tr.appendChild(tdNote);
 
       var tdActions = document.createElement('td');
@@ -2265,14 +2305,20 @@ textarea.field-input:focus,
     });
 
     els.trackerEmpty.hidden = rows.length > 0;
+    var missing = all.filter(function (r) { return !r.link; }).length;
+    if (missing) {
+      setStatus('共 ' + all.length + ' 条记录（公司 ' + T.stats(all).companies + ' 家）· ' + missing + ' 条缺工作来源链接，点「编辑」补上。', 'warn');
+    }
     var badge = document.getElementById('trackerBadge');
     if (badge) {
       badge.textContent = String(all.length);
       badge.hidden = all.length === 0;
     }
-    setStatus(rows.length === all.length
-      ? '共 ' + all.length + ' 条记录（公司 ' + T.stats(all).companies + ' 家）'
-      : '筛选出 ' + rows.length + ' 条 / 共 ' + all.length + ' 条', '');
+    if (!missing) {
+      setStatus(rows.length === all.length
+        ? '共 ' + all.length + ' 条记录（公司 ' + T.stats(all).companies + ' 家）'
+        : '筛选出 ' + rows.length + ' 条 / 共 ' + all.length + ' 条', '');
+    }
   }
 
   function fillStatusOptions() {
@@ -2363,6 +2409,12 @@ textarea.field-input:focus,
       els.trPosition.focus();
       return;
     }
+    if (!data.link.trim()) {
+      els.trackerFormMsg.textContent = '请填写工作来源链接（招聘页面 / JD 链接），否则不能加入投递跟踪';
+      els.trackerFormMsg.className = 'hint error';
+      els.trLink.focus();
+      return;
+    }
     var list = T.load();
     if (editingId) {
       var found = false;
@@ -2417,12 +2469,14 @@ textarea.field-input:focus,
     var reader = new FileReader();
     reader.onload = function () {
       try {
-        var parsed = T.parseCsv(String(reader.result || ''));
+        var parsedAll = T.parseCsv(String(reader.result || ''));
+        var parsed = parsedAll.filter(function (r) { return r.link; });
+        var skipped = parsedAll.length - parsed.length;
         if (!parsed.length) {
-          setStatus('这个 CSV 里没有识别到记录。', 'error');
+          setStatus('CSV 里没有带「工作来源链接」的记录，已全部跳过。', 'error');
           return;
         }
-        if (!window.confirm('导入 ' + parsed.length + ' 条记录？公司+岗位相同的会更新，其余追加。')) return;
+        if (!window.confirm('导入 ' + parsed.length + ' 条带链接的记录？' + (skipped ? '另有 ' + skipped + ' 条缺链接会被跳过。' : '') + '公司+岗位相同的会更新，其余追加。')) return;
         var list = T.load();
         var map = {};
         list.forEach(function (r) { map[(r.company + '|' + r.position).toLowerCase()] = r; });
@@ -2441,7 +2495,7 @@ textarea.field-input:focus,
         });
         T.save(list);
         render();
-        setStatus('导入完成：新增 ' + added + ' 条，更新 ' + updated + ' 条。', 'ok');
+        setStatus('导入完成：新增 ' + added + ' 条，更新 ' + updated + ' 条' + (skipped ? '；跳过 ' + skipped + ' 条缺链接记录' : '') + '。', '');
       } catch (e) {
         setStatus('导入失败：' + (e.message || e), 'error');
       }
@@ -2450,10 +2504,11 @@ textarea.field-input:focus,
   }
 
   /** 导出简历后自动登记（公司+岗位相同则只更新更新时间） */
-  function registerExport(company, position) {
+  function registerExport(company, position, link) {
     company = String(company || '').trim();
     position = String(position || '').trim();
-    if (!company || !position) return;
+    link = T.normalizeLink ? T.normalizeLink(link) : String(link || '').trim();
+    if (!company || !position || !link) return { ok: false, skipped: true };
     var list = T.load();
     var found = list.filter(function (r) {
       return r.company.toLowerCase() === company.toLowerCase() && r.position.toLowerCase() === position.toLowerCase();
@@ -2461,17 +2516,20 @@ textarea.field-input:focus,
     if (found) {
       found.updatedAt = T.now();
       if (!found.date) found.date = T.today();
+      if (!found.link) found.link = link;
     } else {
       list.push(T.normalize({
         company: company,
         position: position,
         status: 'applied',
+        link: link,
         date: T.today(),
         updatedAt: T.now()
       }));
     }
     T.save(list);
     render();
+    return { ok: true, added: !found, skipped: false };
   }
 
   function bind() {
@@ -2582,7 +2640,7 @@ textarea.field-input:focus,
   var AI_STORE = 'resume-ai-v2';
   var aiConfig = {
     endpoint: 'https://api.deepseek.com/chat/completions',
-    model: 'deepseek-chat',
+    model: 'deepseek-flash',
     key: ''
   };
   var aiBusy = false;
@@ -2616,7 +2674,8 @@ textarea.field-input:focus,
   }
 
   function metaFor(id) {
-    if (!state.meta[id]) state.meta[id] = { company: '', position: '', jd: '', keywords: '', note: '' };
+    if (!state.meta[id]) state.meta[id] = { company: '', position: '', jd: '', keywords: '', note: '', source: '' };
+    if (state.meta[id].source == null) state.meta[id].source = '';
     return state.meta[id];
   }
 
@@ -2749,10 +2808,12 @@ textarea.field-input:focus,
     els.actionsMain.innerHTML = '';
     if (state.local) {
       els.actionsMain.appendChild(button('生成并归档（HTML + PDF）', 'primary', exportLocal));
+      els.actionsMain.appendChild(button('加入投递跟踪', '', trackCurrent));
       els.actionsMain.appendChild(button('下载 HTML', '', downloadCurrent));
       els.actionsMain.appendChild(button('导出 PDF（打印）', '', printCurrent));
     } else {
       els.actionsMain.appendChild(button('导出 PDF（打印）', 'primary', printCurrent));
+      els.actionsMain.appendChild(button('加入投递跟踪', '', trackCurrent));
       els.actionsMain.appendChild(button('下载 HTML', '', downloadCurrent));
     }
   }
@@ -3502,6 +3563,12 @@ textarea.field-input:focus,
     els.aiEndpoint.value = aiConfig.endpoint;
     els.aiModel.value = aiConfig.model;
     els.aiKey.value = aiConfig.key;
+    if (els.aiPreset) {
+      if (/openrouter\.ai/i.test(aiConfig.endpoint)) els.aiPreset.value = 'openrouter';
+      else if (/localhost:11434|127\.0\.0\.1:11434/i.test(aiConfig.endpoint)) els.aiPreset.value = 'ollama';
+      else if (/api\.deepseek\.com/i.test(aiConfig.endpoint)) els.aiPreset.value = 'deepseek';
+      else els.aiPreset.value = '';
+    }
     els.aiTestResult.textContent = '';
     els.aiModal.hidden = false;
     els.aiEndpoint.focus();
@@ -3516,19 +3583,24 @@ textarea.field-input:focus,
     var timer = setTimeout(function () { controller.abort(); }, 90000);
     var res;
     try {
+      var body = {
+        model: aiConfig.model,
+        messages: messages,
+        temperature: 0.3,
+        max_tokens: maxTokens || 4000,
+        stream: false
+      };
+      // DeepSeek 的思考模式默认打开；简历改写用非思考模式更快更便宜
+      if (/api\.deepseek\.com/i.test(aiConfig.endpoint)) {
+        body.thinking = { type: 'disabled' };
+      }
       res = await fetch(aiConfig.endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + aiConfig.key
         },
-        body: JSON.stringify({
-          model: aiConfig.model,
-          messages: messages,
-          temperature: 0.3,
-          max_tokens: maxTokens || 4000,
-          stream: false
-        }),
+        body: JSON.stringify(body),
         signal: controller.signal
       });
     } catch (e) {
@@ -3811,12 +3883,31 @@ textarea.field-input:focus,
     return true;
   }
 
-  function noteApplication(company, position) {
+  function trackCurrent() {
     try {
-      if (window.ResumeTrackerApp && window.ResumeTrackerApp.registerExport) {
-        window.ResumeTrackerApp.registerExport(company, position);
+      var n = currentNames();
+      if (n.error) { setStatus(n.error, 'error'); return; }
+      var source = (metaFor(state.tplId).source || '').trim();
+      if (!source) {
+        setStatus('请先在「① 本次修改」里填写「工作来源链接」，再加入投递跟踪。', 'error');
+        if (els.source) els.source.focus();
+        return;
       }
-    } catch (e) { /* 投递跟踪失败不影响导出 */ }
+      if (!window.ResumeTrackerApp || !window.ResumeTrackerApp.registerExport) {
+        setStatus('投递跟踪还没有加载好，请刷新页面再试。', 'error');
+        return;
+      }
+      var res = window.ResumeTrackerApp.registerExport(n.company, n.position, source);
+      if (res && res.ok) {
+        setStatus((res.added ? '已加入投递跟踪：' : '已在投递跟踪中，已更新时间：') + n.company + ' · ' + n.position
+          + '\n可以切到「投递跟踪」补充面试进度和薪资。', 'ok');
+      } else {
+        setStatus('加入投递跟踪失败：请检查工作来源链接。', 'error');
+        if (els.source) els.source.focus();
+      }
+    } catch (e) {
+      setStatus('加入投递跟踪失败：' + (e.message || e), 'error');
+    }
   }
 
   async function downloadCurrent() {
@@ -3825,7 +3916,6 @@ textarea.field-input:focus,
       var n = currentNames();
       if (n.error) { setStatus(n.error, 'error'); return; }
       downloadBlob(buildExportHtml(), n.names.html);
-      noteApplication(n.company, n.position);
       setStatus('已下载：' + n.names.html + '\n（自包含 HTML：照片已内嵌，双击即可在浏览器打开；打印时按 A4 单页输出）', 'ok');
     } catch (e) {
       setStatus('下载失败：' + (e.message || e), 'error');
@@ -3852,7 +3942,6 @@ textarea.field-input:focus,
       w.document.write(html);
       w.document.close();
       w.document.title = n.names.base;
-      noteApplication(n.company, n.position);
       setStatus('已打开最终版式。在打印对话框里：目标选「另存为 PDF」，纸张 A4，缩放 100%（默认即可），边距选「无」。\n如果手机上找不到打印入口，可改用本机版一键生成 PDF。', 'ok');
       var printed = false;
       var attempts = 0;
@@ -3991,6 +4080,7 @@ textarea.field-input:focus,
     els.jd.value = m.jd || '';
     els.keywords.value = m.keywords || '';
     els.note.value = m.note || '';
+    els.source.value = m.source || '';
     state.company = m.company || '';
     state.position = m.position || '';
     state.note = m.note || '';
@@ -4014,6 +4104,7 @@ textarea.field-input:focus,
     els.trackerView.hidden = !isTracker;
     els.tplSwitch.style.display = isTracker ? 'none' : '';
     els.btnExportTop.style.display = isTracker ? 'none' : '';
+    if (els.btnTrackTop) els.btnTrackTop.style.display = isTracker ? 'none' : '';
     Array.prototype.forEach.call(els.mainTabs.querySelectorAll('button'), function (b) {
       b.setAttribute('aria-pressed', String(b.dataset.view === state.view));
     });
@@ -4098,10 +4189,10 @@ textarea.field-input:focus,
     ['mainTabs', 'resumeView', 'trackerView', 'tplSwitch', 'modeBadge', 'btnExportTop', 'banner', 'company', 'position', 'jd', 'keywords', 'note', 'nameHint',
       'fieldCount', 'tplNotes', 'groups', 'baseInfoBody', 'actionsMain', 'status',
       'previewPane', 'previewWrap', 'scaleLabel', 'previewFrame', 'overflowFlag', 'pageShell',
-      'togglePreview', 'resetAll', 'copyShare', 'reloadTpl', 'themeSelect',
+      'togglePreview', 'resetAll', 'copyShare', 'reloadTpl', 'themeSelect', 'btnTrackTop',
       'matchSummary', 'kwChips', 'matchHint', 'btnPrompt', 'promptModal', 'promptText', 'promptCopy', 'promptClose',
       'btnGenerate', 'btnAiSettings', 'btnUndo', 'aiStatus', 'generateStatus', 'pasteText', 'btnApplyPaste',
-      'aiModal', 'aiEndpoint', 'aiModel', 'aiKey', 'aiSave', 'aiTest', 'aiClear', 'aiTestResult', 'aiClose'].forEach(function (id) {
+      'aiModal', 'aiEndpoint', 'aiModel', 'aiKey', 'aiSave', 'aiTest', 'aiClear', 'aiTestResult', 'aiClose', 'aiPreset', 'source'].forEach(function (id) {
       els[id] = byId(id);
     });
     els.frame = els.previewFrame;
@@ -4171,6 +4262,7 @@ textarea.field-input:focus,
     bindText(els.jd, 'jd');
     bindText(els.keywords, 'keywords');
     bindText(els.note, 'note');
+    bindText(els.source, 'source');
 
     els.resetAll.addEventListener('click', function () {
       if (!window.confirm('把当前模板的所有改写恢复成模板原文？（公司/岗位/JD 不受影响）')) return;
@@ -4217,6 +4309,25 @@ textarea.field-input:focus,
         ? 'AI 已配置（' + aiConfig.model + '）：填好岗位和 JD，点「一键生成修改版」。'
         : '还没有配置 AI Key；可以复制提示词给 AI，再把结果粘回来。', '');
     });
+    if (els.aiPreset) {
+      els.aiPreset.addEventListener('change', function () {
+        var preset = els.aiPreset.value;
+        if (preset === 'deepseek') {
+          els.aiEndpoint.value = 'https://api.deepseek.com/chat/completions';
+          els.aiModel.value = 'deepseek-flash';
+        } else if (preset === 'openrouter') {
+          els.aiEndpoint.value = 'https://openrouter.ai/api/v1/chat/completions';
+          els.aiModel.value = 'google/gemma-4-31b-it:free';
+        } else if (preset === 'ollama') {
+          els.aiEndpoint.value = 'http://127.0.0.1:11434/v1/chat/completions';
+          els.aiModel.value = 'qwen2.5:7b';
+          if (!els.aiKey.value) els.aiKey.value = 'ollama';
+        }
+        els.aiTestResult.textContent = preset
+          ? '已填入预设；请确认 Key 后点「保存 / 测试连接」。'
+          : '';
+      });
+    }
     els.aiTest.addEventListener('click', testAi);
     els.aiClear.addEventListener('click', function () {
       aiConfig.key = '';
@@ -4237,6 +4348,7 @@ textarea.field-input:focus,
       if (state.local) exportLocal();
       else printCurrent();
     });
+    if (els.btnTrackTop) els.btnTrackTop.addEventListener('click', trackCurrent);
 
     els.togglePreview.addEventListener('click', function () {
       state.collapsed = !state.collapsed;
