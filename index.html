@@ -1340,12 +1340,19 @@ textarea.field-input:focus,
         return;
       }
       var kind = def.kind || 'bullet';
+      var maxChars = def.maxChars || (tpl.bulletMaxChars && kind === 'bullet' ? tpl.bulletMaxChars : 0);
+      var minChars = 0;
+      if (tpl.bulletMinDelta && kind === 'bullet') {
+        minChars = Math.max(1, loc.original.length - tpl.bulletMinDelta);
+        if (maxChars) minChars = Math.min(minChars, maxChars);
+      }
       fields.push({
         id: def.id,
         group: def.group,
         kind: kind,
         label: def.label,
-        maxChars: def.maxChars || (tpl.bulletMaxChars && kind === 'bullet' ? tpl.bulletMaxChars : 0),
+        minChars: minChars,
+        maxChars: maxChars,
         start: loc.start,
         end: loc.end,
         original: loc.original
@@ -1639,6 +1646,11 @@ textarea.field-input:focus,
 
     var policy = lengthPolicy(field.kind, origLen);
     var diff = newLen - origLen;
+
+    if (field.minChars && newLen < field.minChars) {
+      level = 'error';
+      messages.push('太短：至少 ' + field.minChars + ' 字（原文 ' + origLen + ' 字，最多只能少 ' + (origLen - field.minChars) + ' 字），当前 ' + newLen + ' 字');
+    }
 
     if (field.maxChars && newLen > field.maxChars) {
       level = 'error';
@@ -1935,6 +1947,7 @@ textarea.field-input:focus,
       resumeTitle: '江怡萱简历',
       totalPagesHint: 'A4 · 1 页（自动缩放）',
       bulletMaxChars: 52,
+      bulletMinDelta: 5,
       groups: [
         { id: 'header', label: '头部 · 意向岗位' },
         { id: 'autoliv', label: '项目经历 · 汽车销量预测（Autoliv）' },
@@ -3082,6 +3095,7 @@ textarea.field-input:focus,
       parts.push('新 <span class="k">' + s.newLen + '</span> 字');
       parts.push('原 ' + s.origLen + ' 字');
       parts.push('差 ' + (s.diff > 0 ? '+' : '') + s.diff);
+      if (field.minChars) parts.push('下限 ' + field.minChars + ' 字');
       if (field.maxChars) parts.push('上限 ' + field.maxChars + ' 字');
       if (s.hasNumbers) {
         parts.push('数字锁定 <span class="nums">' + escapeHtml(Core.numberTokens(field.original).join(' · ')) + '</span>');
@@ -3594,7 +3608,7 @@ textarea.field-input:focus,
     lines.push('3. 把 HR 当成刷短视频的人来写：每条开头直接给匹配点，10 秒内抓住注意力。');
     lines.push('4. 每条经历都必须回答：具体做了什么、做到什么程度、用什么数据/结果证明。');
     if (maxChars) {
-      lines.push('5. 中文每条列表要点不超过 ' + maxChars + ' 字（含标点），并且在 A4 上必须只占一行；超过就继续压缩。');
+      lines.push('5. 中文每条列表要点至少保留原文减 5 字，最多 ' + maxChars + ' 字（含标点）；在这个范围内尽量写满、写具体，不要为了短而少写，并且必须只占一行。');
     }
     lines.push('');
     lines.push('【希望覆盖的关键词】');
@@ -3613,7 +3627,10 @@ textarea.field-input:focus,
         var orig = f.original;
         var current = vals[f.id] == null ? orig : vals[f.id];
         var nums = Core.numberTokens(orig);
-        lines.push('- ' + f.label + '（原文 ' + orig.length + ' 字' + (nums.length ? '，必须保留数字：' + nums.join('、') : '') + '）');
+        var range = '';
+        if (f.minChars && f.maxChars) range = '，目标 ' + f.minChars + '–' + f.maxChars + ' 字（尽量接近 ' + f.maxChars + '）';
+        else if (f.maxChars) range = '，最多 ' + f.maxChars + ' 字';
+        lines.push('- ' + f.label + '（原文 ' + orig.length + ' 字' + range + (nums.length ? '，必须保留数字：' + nums.join('、') : '') + '）');
         lines.push('  当前：' + current);
         if (Core.normalizeText(current) !== Core.normalizeText(orig)) {
           lines.push('  模板原文：' + orig);
@@ -3762,6 +3779,8 @@ textarea.field-input:focus,
         label: f.label,
         kind: f.kind,
         targetLength: f.original.length,
+        minLength: f.minChars || null,
+        maxLength: f.maxChars || null,
         mustKeep: Core.numberTokens(f.original)
       };
     });
@@ -3773,7 +3792,7 @@ textarea.field-input:focus,
       '每条经历都必须回答：具体做了什么、做到什么程度、用什么数据/结果证明。',
       '关键词优先自然融入「软件应用」「综合优势」两行技能；语言能力只做必要调整。技能行可以改写、重排，但不得虚构原文没有的软件、语言或经历。',
       maxChars
-        ? '中文每条列表要点不超过 ' + maxChars + ' 字（含标点），必须只占一行；超过就继续压缩。'
+        ? '中文每条列表要点至少保留原文字数减 5，最多 ' + maxChars + ' 字（含标点），必须只占一行；在范围内尽量写满、写具体，不要写短。'
         : '英文结果保持简洁、具体。',
       '硬性规则：',
       '1. 不新增、删除、合并任何条目；不改变成果、时间、公司、学校、技能事实。',
@@ -3791,6 +3810,7 @@ textarea.field-input:focus,
       '关键词': activeKeywords(),
       '写作要求': {
         'bulletMaxChars': maxChars || null,
+        'bulletMinDelta': 5,
         'oneLine': !!maxChars,
         'skillsEditable': true,
         'tone': '像短视频开头一样抓人，10 秒内给出岗位匹配点',
