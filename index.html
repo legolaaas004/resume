@@ -30,6 +30,8 @@
     mode = (next === 'light' || next === 'dark') ? next : 'system';
     try { localStorage.setItem(KEY, mode); } catch (e) { /* 忽略 */ }
     apply(mode);
+    var select = document.getElementById('themeSelect');
+    if (select) select.value = mode;
   };
   try {
     var mq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -80,25 +82,29 @@
    跟随系统 / 浅色 / 深色 由页面顶部的主题选择器和一段 head 内联脚本决定。 */
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #1c1f24;
-  --panel: #24282e;
-  --panel-2: #2a2f35;
-  --ink: #e8ebee;
-  --muted: #a4adb7;
-  --line: #3b4149;
-  --line-strong: #4b525b;
+  --bg: #0d1117;
+  --panel: #161b22;
+  --panel-2: #21262d;
+  --ink: #e6edf3;
+  --muted: #8b949e;
+  --line: #30363d;
+  --line-strong: #484f58;
 
-  --accent: #d6dbe1;
-  --accent-hover: #e6eaef;
-  --accent-soft: #30353b;
-  --accent-ink: #171a1e;
+  --accent: #1f6feb;
+  --accent-hover: #388bfd;
+  --accent-soft: #1f6feb33;
+  --accent-ink: #ffffff;
 
-  --ok: #d6dbe1;
-  --ok-soft: #30353b;
-  --warn: #aab2bc;
-  --warn-soft: #30353b;
-  --error: #f0908a;
-  --error-soft: #3a2322;
+  --ok: #58a6ff;
+  --ok-soft: #1f6feb22;
+  --warn: #8b949e;
+  --warn-soft: #21262d;
+  --error: #f85149;
+  --error-soft: #3d1d1f;
+
+  --radius: 8px;
+  --radius-sm: 6px;
+  --radius-xs: 4px;
 }
 
 * { box-sizing: border-box; }
@@ -1122,6 +1128,252 @@ details.readonly summary { font-weight: 600; }
   .field-switch button { padding: 4px 6px; font-size: 11px; }
 }
 
+
+/* ---------- v4：层级、主 Tab、统一控件、可拖拽分栏 ---------- */
+.brand { font-size: 16px; font-weight: 600; }
+
+.topbar {
+  align-items: center;
+  gap: 14px;
+  min-height: 62px;
+  padding: 10px 22px;
+}
+
+/* 浏览器式一级 Tab：明显大于模板切换 */
+.main-tabs {
+  display: flex;
+  align-items: flex-end;
+  align-self: stretch;
+  gap: 2px;
+  margin-left: 6px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.main-tabs button {
+  height: 39px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 500;
+}
+.main-tabs button:hover { background: var(--panel-2); color: var(--ink); }
+.main-tabs button[aria-pressed="true"] {
+  background: var(--panel);
+  border-color: var(--line);
+  border-bottom-color: var(--accent);
+  color: var(--ink);
+  font-weight: 600;
+}
+.main-tabs .tab-badge { margin-left: 5px; }
+
+/* 模板切换仍保留原来的框 */
+.seg.tpl-switch { padding: 3px; }
+.seg.tpl-switch button {
+  height: 32px;
+  min-width: 78px;
+  padding: 0 12px;
+  font-size: 12.5px;
+}
+
+/* 所有按钮 / 选择框统一高度和圆角 */
+.btn,
+.btn.small,
+.topbar .btn,
+.preview-bar .btn,
+.tracker-toolbar .btn {
+  height: 38px;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.btn.small { padding: 0 12px; font-size: 12.5px; }
+.topbar #btnTrackTop,
+.topbar #btnExportTop { height: 38px; min-width: 96px; padding: 0 14px; }
+.preview-bar .btn { min-width: 104px; }
+.tracker-toolbar .input { height: 38px; }
+
+/* 01–04 与区块大标题同字号，分隔线加粗 */
+.editor-block {
+  border-top: 2px solid var(--line-strong);
+  padding: 24px 0 10px;
+}
+.block-head { margin-bottom: 18px; align-items: baseline; }
+.block-no,
+.block-title {
+  font-size: 19px;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.block-no { color: var(--muted); }
+
+/* 二级：分组标题略小；三级：字段名更小并加符号 */
+#groups .group-head {
+  padding: 0 0 10px;
+  border-bottom: 0;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+.field-name {
+  position: relative;
+  padding-left: 13px;
+  font-size: 12px;
+  font-weight: 400;
+}
+.field-name::before {
+  content: "·";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--muted);
+}
+
+/* 功能：四个一样大的框，一行两个 */
+.actions { gap: 14px; }
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.actions-grid > .btn,
+.action-cell .btn {
+  width: 100%;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 10px;
+  font-size: 13px;
+}
+.action-cell { min-width: 0; }
+.theme-tile {
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  font-size: 13px;
+  cursor: pointer;
+}
+.theme-tile .theme-select {
+  width: auto;
+  min-width: 0;
+  height: 30px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+}
+.theme-tile .theme-select:focus { outline: none; }
+
+/* 生成区的四个按钮也两列等宽 */
+.run-card .actions-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+.run-card .actions-row .btn { width: 100%; height: 40px; }
+
+/* 关键词：匹配到的用斜线，未匹配用点 */
+.kw::before { content: "·"; }
+.kw.ok { color: var(--ink); }
+.kw.ok::before { content: "/"; color: var(--accent); }
+.kw.miss { color: var(--muted); }
+.kw.miss::before { content: "·"; }
+
+/* 左右可拖拽分栏 */
+.layout {
+  grid-template-columns: var(--editor-w, 520px) 10px minmax(0, 1fr);
+  column-gap: 16px;
+  row-gap: 0;
+  align-items: start;
+}
+.splitter {
+  position: sticky;
+  top: 96px;
+  align-self: start;
+  height: calc(100vh - 120px);
+  min-height: 420px;
+  cursor: col-resize;
+  touch-action: none;
+}
+.splitter::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-.5px);
+  background: var(--line-strong);
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+.splitter:hover::before,
+.splitter.dragging::before,
+.splitter:focus-visible::before { opacity: .75; }
+
+@media (max-width: 1120px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .splitter { display: none; }
+  .main-tabs { margin-left: 0; }
+}
+@media (max-width: 640px) {
+  .topbar { align-items: center; }
+  .main-tabs button { flex: 1; height: 38px; padding: 0 10px; font-size: 14px; }
+  .seg.tpl-switch button { min-width: 68px; padding: 0 9px; }
+  .actions-grid { gap: 8px; }
+  .actions-grid > .btn, .action-cell .btn, .theme-tile { height: 42px; min-height: 42px; }
+  .block-no, .block-title { font-size: 18px; }
+}
+
+/* 统一控件尺寸：所有按钮/选择框同高，模板切换也不缩小 */
+.btn,
+.btn.small,
+.topbar .btn,
+.preview-bar .btn,
+.tracker-toolbar .btn {
+  height: 40px;
+  min-height: 40px;
+}
+.topbar #btnTrackTop,
+.topbar #btnExportTop { height: 40px; min-width: 96px; }
+.seg.tpl-switch button { height: 40px; min-width: 84px; }
+.tracker-toolbar .btn { min-width: 110px; }
+.tracker-toolbar .input { height: 40px; }
+.run-card .actions-row .btn { height: 40px; }
+.actions-grid > .btn,
+.action-cell .btn,
+.theme-tile { height: 40px; min-height: 40px; }
+.main-tabs button { height: 42px; }
+.preview-bar .btn { min-width: 104px; }
+
+/* 分栏拖拽手柄：不画整条竖线，只留一个小握把 */
+.splitter::after {
+  content: "⋮";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--line-strong);
+  font-size: 16px;
+  line-height: 1;
+  opacity: .75;
+  pointer-events: none;
+}
+.splitter::before { display: none; }
+.splitter.dragging::after { color: var(--accent); opacity: 1; }
+
 </style>
 </head>
 <body>
@@ -1131,8 +1383,8 @@ details.readonly summary { font-weight: 600; }
     <button type="button" data-view="resume" aria-pressed="true">简历修改</button>
     <button type="button" data-view="tracker" aria-pressed="false">投递跟踪 <span class="tab-badge" id="trackerBadge" hidden>0</span></button>
   </div>
-  <div class="seg" id="tplSwitch" role="group" aria-label="模板切换"></div>
   <span class="spacer"></span>
+  <div class="seg tpl-switch" id="tplSwitch" role="group" aria-label="模板切换"></div>
   <span class="badge offline" id="modeBadge">检测环境…</span>
   <button class="btn small" id="btnTrackTop" type="button">加入跟踪</button>
   <button class="btn small primary" id="btnExportTop">导出</button>
@@ -1181,7 +1433,7 @@ details.readonly summary { font-weight: 600; }
           <button class="btn primary" id="btnGenerate" type="button">一键生成修改版</button>
           <button class="btn small" id="btnPrompt" type="button">复制改写提示词</button>
           <button class="btn small" id="btnAiSettings" type="button">AI 设置</button>
-          <button class="btn small ghost" id="btnUndo" type="button" disabled>撤销生成</button>
+          <button class="btn small" id="btnUndo" type="button" disabled>撤销生成</button>
         </div>
         <div class="hint" id="generateStatus">填岗位和 JD 后生成</div>
         <details class="paste-box">
@@ -1224,24 +1476,26 @@ details.readonly summary { font-weight: 600; }
         <span class="block-title">功能</span>
       </div>
       <div class="card actions">
-        <div class="actions-row" id="actionsMain"></div>
-        <div class="actions-row">
-          <button class="btn small" id="resetAll" type="button">恢复模板原文</button>
-          <button class="btn small" id="copyShare" type="button">复制分享链接</button>
-        </div>
-        <div class="theme-row">
-          <span class="field-label">主题</span>
-          <select class="theme-select" id="themeSelect" aria-label="主题">
-            <option value="system">跟随系统</option>
-            <option value="light">浅色</option>
-            <option value="dark">深色</option>
-          </select>
+        <div class="actions-grid">
+          <div class="action-cell" id="actionsMain"></div>
+          <label class="action-cell theme-tile">
+            <span>主题</span>
+            <select class="theme-select" id="themeSelect" aria-label="主题">
+              <option value="system">跟随系统</option>
+              <option value="light">浅色</option>
+              <option value="dark">深色</option>
+            </select>
+          </label>
+          <button class="btn" id="resetAll" type="button">恢复模板原文</button>
+          <button class="btn" id="copyShare" type="button">复制分享链接</button>
         </div>
         <div class="hint" id="nameHint"></div>
         <div class="status-box" id="status"></div>
       </div>
     </section>
   </section>
+
+  <div class="splitter" id="splitter" role="separator" aria-orientation="vertical" aria-label="调整左右宽度" tabindex="0"></div>
 
   <aside class="preview" id="previewPane">
     <div class="card preview-bar">
@@ -1266,13 +1520,14 @@ details.readonly summary { font-weight: 600; }
   <main class="tracker-view" id="trackerView" hidden>
     <div class="tracker-inner">
       <div class="card">
-        <div class="card-title">投递跟踪 <span class="sub">数据只存在当前浏览器；可导出 CSV 备份 / 导入恢复</span></div>
+        <div class="card-title">投递跟踪 <span class="sub">数据只存在当前浏览器；可导出 CSV / 图片备份，也可导入恢复</span></div>
         <div class="stats" id="trackerStats"></div>
         <div class="tracker-toolbar">
           <input class="input" id="trackerSearch" placeholder="搜索公司 / 岗位 / 备注" autocomplete="off">
           <select class="input" id="trackerFilter"></select>
           <button class="btn primary" id="trackerAdd" type="button">+ 新增投递</button>
           <button class="btn small" id="trackerExport" type="button">导出 CSV</button>
+          <button class="btn small" id="trackerImage" type="button">导出图片</button>
           <label class="btn small">导入 CSV<input id="trackerImport" type="file" accept=".csv,text/csv" hidden></label>
         </div>
         <div class="hint" id="trackerStatus"></div>
@@ -2547,9 +2802,10 @@ details.readonly summary { font-weight: 600; }
 
   var els = {};
   var editingId = null;
+  var lastRows = [];
 
   function cache() {
-    ['trackerView', 'trackerStats', 'trackerSearch', 'trackerFilter', 'trackerAdd', 'trackerExport',
+    ['trackerView', 'trackerStats', 'trackerSearch', 'trackerFilter', 'trackerAdd', 'trackerExport', 'trackerImage',
       'trackerImport', 'trackerStatus', 'trackerBody', 'trackerEmpty', 'trackerModal', 'trackerModalTitle',
       'trCompany', 'trPosition', 'trStatus', 'trSalary', 'trDate', 'trChannel', 'trLink', 'trNote',
       'trackerSave', 'trackerCancel', 'trackerDelete', 'trackerClose', 'trackerFormMsg', 'trackerBadge'].forEach(function (id) {
@@ -2687,6 +2943,7 @@ details.readonly summary { font-weight: 600; }
       els.trackerBody.appendChild(tr);
     });
 
+    lastRows = rows;
     els.trackerEmpty.hidden = rows.length > 0;
     var missing = all.filter(function (r) { return !r.link; }).length;
     if (missing) {
@@ -2847,6 +3104,159 @@ details.readonly summary { font-weight: 600; }
     setStatus('已导出 CSV（可用 Excel 打开，也可以再导入回来备份）。', 'ok');
   }
 
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function fitText(ctx, text, maxWidth) {
+    text = String(text || '');
+    if (ctx.measureText(text).width <= maxWidth) return text;
+    var out = text;
+    while (out.length && ctx.measureText(out + '…').width > maxWidth) out = out.slice(0, -1);
+    return out ? out + '…' : '…';
+  }
+
+  function exportImage() {
+    var rows = (lastRows && lastRows.length) ? lastRows : sorted(T.load());
+    if (!rows.length) {
+      setStatus('还没有可导出的投递记录，先新增一条。', 'warn');
+      return;
+    }
+    var all = T.load();
+    var s = T.stats(all);
+    var W = 1200;
+    var left = 72;
+    var top = 48;
+    var innerW = W - left * 2;
+    var headerH = 132;
+    var statsH = 82;
+    var tableHead = 38;
+    var rowH = 56;
+    var footer = 54;
+    var H = top + 36 + headerH + statsH + tableHead + rows.length * rowH + footer;
+    var scale = 2;
+    var canvas = document.createElement('canvas');
+    canvas.width = W * scale;
+    canvas.height = H * scale;
+    var ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+
+    ctx.fillStyle = '#f6f8fa';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#ffffff';
+    roundRect(ctx, 24, 24, W - 48, H - 48, 12);
+    ctx.fill();
+
+    ctx.fillStyle = '#1f2328';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.font = '600 30px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.fillText('投递跟踪', left, top + 38);
+    ctx.fillStyle = '#59636e';
+    ctx.font = '400 13px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.fillText('截至 ' + T.today() + ' · 共 ' + all.length + ' 条 · 公司 ' + s.companies + ' 家', left, top + 64);
+    ctx.textAlign = 'right';
+    ctx.fillText('Resume Tailor', W - left, top + 38);
+    ctx.textAlign = 'left';
+
+    var stats = [
+      ['公司', s.companies],
+      ['投递', s.total],
+      ['面试中', s.interviewing],
+      ['Offer', s.offers]
+    ];
+    var sw = innerW / stats.length;
+    var sy = top + 100;
+    stats.forEach(function (item, i) {
+      var x = left + i * sw;
+      ctx.fillStyle = '#1f2328';
+      ctx.font = '600 24px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillText(String(item[1]), x, sy + 18);
+      ctx.fillStyle = '#59636e';
+      ctx.font = '400 12px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillText(item[0], x, sy + 38);
+    });
+
+    var tableY = top + 178;
+    ctx.fillStyle = '#59636e';
+    ctx.font = '500 12px -apple-system, "PingFang SC", sans-serif';
+    var cols = [0, 250, 345, 460, 570, 665];
+    var heads = ['公司 / 岗位', '进度', '薪资', '投递日期', '渠道', '备注 / 链接'];
+    heads.forEach(function (h, i) {
+      ctx.fillText(h, left + cols[i], tableY);
+    });
+    ctx.strokeStyle = '#d0d7de';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(left, tableY + 12);
+    ctx.lineTo(W - left, tableY + 12);
+    ctx.stroke();
+
+    var y = tableY + 42;
+    rows.forEach(function (r) {
+      ctx.fillStyle = '#1f2328';
+      ctx.font = '500 14px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillText(fitText(ctx, r.company || '（未填公司）', 220), left + cols[0], y);
+      ctx.fillStyle = '#59636e';
+      ctx.font = '400 12px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillText(fitText(ctx, r.position || '', 220), left + cols[0], y + 19);
+
+      var info = T.statusInfo(r.status);
+      ctx.fillStyle = info.group === 'interview' ? '#8250df' : info.group === 'offer' ? '#0969da' : info.group === 'closed' ? '#8c959f' : '#1f6feb';
+      ctx.beginPath();
+      ctx.arc(left + cols[1] + 3, y - 4, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#1f2328';
+      ctx.font = '400 13px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillText(info.label, left + cols[1] + 12, y);
+
+      ctx.fillStyle = '#1f2328';
+      ctx.font = '400 13px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillText(fitText(ctx, r.salary || '—', 95), left + cols[2], y);
+      ctx.fillText(fitText(ctx, r.date || '—', 95), left + cols[3], y);
+      ctx.fillText(fitText(ctx, r.channel || '—', 80), left + cols[4], y);
+
+      ctx.fillStyle = '#59636e';
+      ctx.font = '400 12px -apple-system, "PingFang SC", sans-serif';
+      ctx.fillText(fitText(ctx, r.note || '—', 330), left + cols[5], y);
+      if (r.link) {
+        ctx.fillStyle = '#8c959f';
+        ctx.font = '400 11px -apple-system, "PingFang SC", sans-serif';
+        ctx.fillText(fitText(ctx, r.link.replace(/^https?:\/\//, ''), 330), left + cols[5], y + 18);
+      }
+
+      ctx.strokeStyle = '#d8dee4';
+      ctx.beginPath();
+      ctx.moveTo(left, y + 31);
+      ctx.lineTo(W - left, y + 31);
+      ctx.stroke();
+      y += rowH;
+    });
+
+    ctx.fillStyle = '#8c959f';
+    ctx.font = '400 11px -apple-system, "PingFang SC", sans-serif';
+    ctx.fillText('由简历生成器导出 · ' + T.today(), left, H - 34);
+
+    canvas.toBlob(function (blob) {
+      if (!blob) { setStatus('图片生成失败，请重试。', 'error'); return; }
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = '投递跟踪_' + T.today().replace(/-/g, '') + '.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      setStatus('已导出投递跟踪图片。', 'ok');
+    }, 'image/png');
+  }
+
   function importCsvFile(file) {
     if (!file) return;
     var reader = new FileReader();
@@ -2918,6 +3328,7 @@ details.readonly summary { font-weight: 600; }
   function bind() {
     els.trackerAdd.addEventListener('click', openNew);
     els.trackerExport.addEventListener('click', exportCsv);
+    if (els.trackerImage) els.trackerImage.addEventListener('click', exportImage);
     els.trackerImport.addEventListener('change', function () {
       importCsvFile(els.trackerImport.files && els.trackerImport.files[0]);
       els.trackerImport.value = '';
@@ -3189,7 +3600,7 @@ details.readonly summary { font-weight: 600; }
     if (state.local) {
       els.modeBadge.className = 'badge live';
       els.modeBadge.textContent = '本机版';
-      els.modeBadge.title = '本机版：可归档到 output/，并生成服务端 PDF';
+      els.modeBadge.title = '本机版：中文归档到 中文/，英文归档到 英文/，并生成服务端 PDF';
       els.btnExportTop.textContent = '导出';
       els.btnExportTop.title = '生成并归档';
     } else {
@@ -3837,8 +4248,9 @@ details.readonly summary { font-weight: 600; }
     }
     els.nameHint.className = 'hint';
     if (state.local) {
-      els.nameHint.innerHTML = '归档到 <code>output/' + escapeHtml(n.names.folder) + '/</code><br><br>' +
-        '文件：<br><code>' + escapeHtml(n.names.html) + '</code><br><br>' +
+      var langDir = state.tplId === 'zh' ? '中文' : '英文';
+      els.nameHint.innerHTML = '归档到 <code>' + langDir + '/' + escapeHtml(n.names.folder) + '/</code><br>' +
+        '文件：<code>' + escapeHtml(n.names.html) + '</code><br>' +
         '<code>' + escapeHtml(n.names.pdf) + '</code>';
     } else {
       els.nameHint.innerHTML = '下载文件名：<br><code>' + escapeHtml(n.names.html) + '</code>';
@@ -4804,11 +5216,76 @@ details.readonly summary { font-weight: 600; }
 
   /* ---------------- 初始化与事件 ---------------- */
 
+  function initSplitter() {
+    var layout = els.resumeView;
+    var splitter = els.splitter;
+    if (!layout || !splitter) return;
+    var KEY = 'resume-split-w';
+    var dragging = false;
+    var raf = 0;
+
+    function paddingLeft() {
+      var v = parseFloat(getComputedStyle(layout).paddingLeft || '0');
+      return isNaN(v) ? 0 : v;
+    }
+    function clamp(w) {
+      var max = Math.max(380, layout.getBoundingClientRect().width - 560);
+      return Math.max(380, Math.min(max, w));
+    }
+    function applyWidth(w) {
+      w = clamp(w);
+      layout.style.setProperty('--editor-w', w + 'px');
+      try { localStorage.setItem(KEY, String(Math.round(w))); } catch (e) { /* 忽略 */ }
+      if (raf) return;
+      raf = requestAnimationFrame(function () {
+        raf = 0;
+        layoutPreview();
+        Object.keys(state.fieldEls).forEach(function (key) {
+          fitFieldHeight(state.fieldEls[key].ta);
+        });
+      });
+    }
+    var saved = NaN;
+    try { saved = parseFloat(localStorage.getItem(KEY) || ''); } catch (e) { saved = NaN; }
+    if (!isNaN(saved) && saved >= 380) {
+      layout.style.setProperty('--editor-w', clamp(saved) + 'px');
+    }
+    splitter.addEventListener('pointerdown', function (e) {
+      if (window.matchMedia('(max-width: 1120px)').matches) return;
+      dragging = true;
+      splitter.classList.add('dragging');
+      splitter.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    splitter.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      applyWidth(e.clientX - layout.getBoundingClientRect().left - paddingLeft());
+    });
+    function stopDrag() {
+      if (!dragging) return;
+      dragging = false;
+      splitter.classList.remove('dragging');
+    }
+    splitter.addEventListener('pointerup', stopDrag);
+    splitter.addEventListener('pointercancel', stopDrag);
+    splitter.addEventListener('dblclick', function () { applyWidth(520); });
+    splitter.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault();
+      var cur = parseFloat(getComputedStyle(layout).getPropertyValue('--editor-w')) || 520;
+      applyWidth(cur + (e.key === 'ArrowLeft' ? -24 : 24));
+    });
+    window.addEventListener('resize', function () {
+      var cur = parseFloat(getComputedStyle(layout).getPropertyValue('--editor-w')) || 520;
+      layout.style.setProperty('--editor-w', clamp(cur) + 'px');
+    });
+  }
+
   function cacheEls() {
     ['mainTabs', 'resumeView', 'trackerView', 'tplSwitch', 'modeBadge', 'btnExportTop', 'banner', 'company', 'position', 'jd', 'keywords', 'note', 'nameHint',
       'groups', 'baseInfoBody', 'actionsMain', 'status',
       'previewPane', 'previewWrap', 'scaleLabel', 'previewFrame', 'overflowFlag', 'pageShell',
-      'togglePreview', 'resetAll', 'copyShare', 'themeSelect', 'btnTrackTop',
+      'togglePreview', 'resetAll', 'copyShare', 'themeSelect', 'btnTrackTop', 'splitter',
       'matchSummary', 'kwChips', 'btnPrompt', 'promptModal', 'promptText', 'promptCopy', 'promptClose',
       'btnGenerate', 'btnAiSettings', 'btnUndo', 'aiStatus', 'generateStatus', 'pasteText', 'btnApplyPaste',
       'aiModal', 'aiEndpoint', 'aiModel', 'aiKey', 'aiSave', 'aiTest', 'aiClear', 'aiTestResult', 'aiClose', 'aiPreset', 'source'].forEach(function (id) {
@@ -4981,6 +5458,7 @@ details.readonly summary { font-weight: 600; }
 
   async function init() {
     cacheEls();
+    initSplitter();
     bind();
     loadAiConfig();
     renderActions();
