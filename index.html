@@ -1489,6 +1489,37 @@ details.readonly summary { font-weight: 600; }
   .topbar-line-3 #btnExportTop { order: 3; }
 }
 
+/* ---------- v6：第三行属于简历内容区 / 去掉三级标题的点 / 下拉箭头 ---------- */
+.topbar-line-3 {
+  margin: 0 -22px;
+  padding: 10px 22px;
+  background: var(--bg);
+}
+.field-name::before { display: none; }
+.field-name { padding-left: 0; }
+
+select.input,
+.tracker-status-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 15px) calc(50% - 2px),
+    calc(100% - 10px) calc(50% - 2px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 28px;
+}
+
+@media (max-width: 640px) {
+  .topbar-line-3 {
+    margin: 0 -12px;
+    padding: 8px 12px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1504,7 +1535,7 @@ details.readonly summary { font-weight: 600; }
       <button type="button" data-view="tracker" aria-pressed="false">投递跟踪 <span class="tab-badge" id="trackerBadge" hidden>0</span></button>
     </div>
   </div>
-  <div class="topbar-line topbar-line-3">
+  <div class="topbar-line topbar-line-3" id="topbarActionsRow">
     <div class="seg tpl-switch" id="tplSwitch" role="group" aria-label="模板切换"></div>
     <span class="spacer"></span>
     <button class="btn small" id="btnTrackTop" type="button">加入跟踪</button>
@@ -1528,28 +1559,28 @@ details.readonly summary { font-weight: 600; }
         <div class="grid-2">
           <label>
             <span class="field-label">公司</span>
-            <input class="input" id="company" placeholder="字节跳动" autocomplete="off">
+            <input class="input" id="company" autocomplete="off">
           </label>
           <label>
             <span class="field-label">岗位</span>
-            <input class="input" id="position" placeholder="数据分析师（电商）" autocomplete="off">
+            <input class="input" id="position" autocomplete="off">
           </label>
         </div>
         <label style="display:block;margin-top:12px">
           <span class="field-label">岗位 JD</span>
-          <textarea class="input jd-big" id="jd" rows="8" placeholder="粘贴招聘要求"></textarea>
+          <textarea class="input jd-big" id="jd" rows="8"></textarea>
         </label>
         <label style="display:block;margin-top:10px">
           <span class="field-label">关键词</span>
-          <input class="input" id="keywords" placeholder="SQL, 数据分析, 用户增长" autocomplete="off">
+          <input class="input" id="keywords" autocomplete="off">
         </label>
         <label style="display:block;margin-top:10px">
-          <span class="field-label">工作来源链接</span>
-          <input class="input" id="source" placeholder="https://… 招聘页面 / JD 链接" autocomplete="off">
+          <span class="field-label">链接</span>
+          <input class="input" id="source" autocomplete="off">
         </label>
         <label style="display:block;margin-top:10px">
           <span class="field-label">备注</span>
-          <input class="input" id="note" placeholder="内推人 / 投递渠道" autocomplete="off">
+          <input class="input" id="note" autocomplete="off">
         </label>
         <div class="actions-row" style="margin-top:12px">
           <button class="btn primary" id="btnGenerate" type="button">一键生成修改版</button>
@@ -1699,7 +1730,7 @@ details.readonly summary { font-weight: 600; }
         <input class="input" id="trSalary" placeholder="例如：25k×14 / 30–35w" autocomplete="off">
       </label>
       <label style="grid-column:1/-1">
-        <span class="field-label">工作来源链接</span>
+        <span class="field-label">链接</span>
         <input class="input" id="trLink" placeholder="https://… 招聘页面 / JD 链接" autocomplete="off">
       </label>
       <label style="grid-column:1/-1">
@@ -3230,7 +3261,7 @@ details.readonly summary { font-weight: 600; }
       return;
     }
     if (!data.link.trim()) {
-      els.trackerFormMsg.textContent = '请填写工作来源链接（招聘页面 / JD 链接），否则不能加入投递跟踪';
+      els.trackerFormMsg.textContent = '请填写链接（招聘页面 / JD 链接），否则不能加入投递跟踪';
       els.trackerFormMsg.className = 'hint error';
       els.trLink.focus();
       return;
@@ -5049,7 +5080,7 @@ details.readonly summary { font-weight: 600; }
       if (n.error) { setStatus(n.error, 'error'); return; }
       var source = (metaFor(state.tplId).source || '').trim();
       if (!source) {
-        setStatus('请先在「① 本次修改」里填写「工作来源链接」，再加入投递跟踪。', 'error');
+        setStatus('请先在「① 本次修改」里填写「链接」，再加入投递跟踪。', 'error');
         if (els.source) els.source.focus();
         return;
       }
@@ -5067,7 +5098,7 @@ details.readonly summary { font-weight: 600; }
         setStatus((res.added ? '已加入投递跟踪：' : '已在投递跟踪中，已更新时间：') + n.company + ' · ' + n.position
           + '\n可以切到「投递跟踪」补充面试进度和薪资。', 'ok');
       } else {
-        setStatus('加入投递跟踪失败：请检查工作来源链接。', 'error');
+        setStatus('加入投递跟踪失败：请检查链接。', 'error');
         if (els.source) els.source.focus();
       }
     } catch (e) {
@@ -5274,6 +5305,7 @@ details.readonly summary { font-weight: 600; }
     els.resumeView.hidden = isTracker;
     els.trackerView.hidden = !isTracker;
     els.tplSwitch.style.display = isTracker ? 'none' : '';
+    if (els.topbarActionsRow) els.topbarActionsRow.style.display = isTracker ? 'none' : '';
     els.btnExportTop.style.display = isTracker ? 'none' : '';
     if (els.btnTrackTop) els.btnTrackTop.style.display = isTracker ? 'none' : '';
     Array.prototype.forEach.call(els.mainTabs.querySelectorAll('button'), function (b) {
@@ -5452,7 +5484,7 @@ details.readonly summary { font-weight: 600; }
     ['mainTabs', 'resumeView', 'trackerView', 'tplSwitch', 'modeBadge', 'btnExportTop', 'banner', 'company', 'position', 'jd', 'keywords', 'note', 'nameHint',
       'groups', 'baseInfoBody', 'actionsMain', 'status',
       'previewPane', 'previewWrap', 'scaleLabel', 'previewFrame', 'overflowFlag', 'pageShell',
-      'togglePreview', 'resetAll', 'copyShare', 'themeToggle', 'btnTrackTop', 'splitter',
+      'togglePreview', 'resetAll', 'copyShare', 'themeToggle', 'btnTrackTop', 'splitter', 'topbarActionsRow',
       'matchSummary', 'kwChips', 'btnPrompt', 'promptModal', 'promptText', 'promptCopy', 'promptClose',
       'btnGenerate', 'btnAiSettings', 'btnUndo', 'aiStatus', 'generateStatus', 'pasteText', 'btnApplyPaste',
       'aiModal', 'aiEndpoint', 'aiModel', 'aiKey', 'aiSave', 'aiTest', 'aiClear', 'aiTestResult', 'aiClose', 'aiPreset', 'source'].forEach(function (id) {
