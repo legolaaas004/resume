@@ -60,8 +60,8 @@
 
   --ok: #2f343a;
   --ok-soft: #eef0f2;
-  --warn: #8a6400;
-  --warn-soft: #fbf3d6;
+  --warn: #667085;
+  --warn-soft: #f0f1f3;
   --error: #b42318;
   --error-soft: #fceceb;
 
@@ -95,8 +95,8 @@
 
   --ok: #d6dbe1;
   --ok-soft: #30353b;
-  --warn: #e6c05a;
-  --warn-soft: #332d1d;
+  --warn: #aab2bc;
+  --warn-soft: #30353b;
   --error: #f0908a;
   --error-soft: #3a2322;
 }
@@ -996,6 +996,132 @@ textarea.field-input:focus,
   border-color: var(--line-strong);
 }
 
+
+/* ---------- 统一视觉：更宽松、少线条、轻加粗 ---------- */
+body { line-height: 1.6; }
+
+.topbar { padding: 12px 22px; gap: 16px; }
+.brand { font-weight: 600; }
+.seg button[aria-pressed="true"] { font-weight: 500; }
+.badge, .tab-badge { font-weight: 400; }
+
+.layout {
+  grid-template-columns: minmax(420px, 520px) minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px 26px 64px;
+}
+.editor { gap: 0; }
+.editor-block { border-top: 1px solid var(--line); padding: 24px 0 10px; }
+.editor-block:first-child { padding-top: 0; }
+.block-head { margin: 0 0 16px; gap: 9px; }
+.block-no { font-weight: 500; }
+.block-title { font-size: 15px; font-weight: 600; }
+.block-head .sub { font-size: 12px; }
+
+.card { padding: 16px 18px; }
+.card-title { margin-bottom: 12px; font-weight: 600; }
+.actions { gap: 14px; }
+.actions-row { gap: 9px; }
+.btn { padding: 8px 14px; font-weight: 400; }
+.btn.small { padding: 6px 11px; font-size: 12.5px; }
+.btn.primary { font-weight: 500; }
+.theme-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.theme-row .field-label { margin: 0; font-size: 12px; }
+.theme-select { min-width: 120px; padding: 6px 9px; }
+
+#groups { gap: 0; }
+#groups .group-card { border-top: 1px solid var(--line); padding: 20px 0 6px; }
+#groups .group-card:first-child { border-top: 0; padding-top: 0; }
+#groups .group-head { padding: 0 0 12px; border-bottom: 0; font-weight: 600; font-size: 13px; }
+#groups .group-body {
+  margin: 0;
+  padding: 0 0 0 26px;
+  border-left: 0;
+  gap: 20px;
+}
+#groups .group-warn {
+  margin: 6px 0 0 26px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+.field { border-top: 0; padding-top: 0; }
+.field-head { margin-bottom: 7px; gap: 10px; align-items: flex-start; }
+.field-name { font-size: 12.5px; font-weight: 500; line-height: 1.5; padding-top: 4px; }
+.field-right { display: flex; align-items: center; gap: 6px; }
+.field-switch { border: 1px solid var(--line); border-radius: var(--radius-sm); background: transparent; }
+.field-switch button { padding: 4px 8px; font-size: 11.5px; line-height: 1.4; }
+.field-switch button + button { border-left: 1px solid var(--line); }
+textarea.field-input { min-height: 58px; padding: 9px 11px; line-height: 1.6; }
+.field-meta {
+  display: block;
+  margin-top: 8px;
+  font-size: 11.5px;
+  color: var(--muted);
+  letter-spacing: .01em;
+}
+.field-meta .k { font-weight: 400; color: inherit; }
+.field-msg { margin-top: 5px; font-size: 11.5px; }
+.field-msg.error { color: var(--error); }
+.field-msg.warn { color: var(--muted); }
+
+.preview { gap: 10px; }
+.preview-bar { padding: 0 0 10px; gap: 12px; }
+.preview-bar .title { font-weight: 600; }
+.preview-bar .scale { color: var(--muted); font-size: 12px; }
+.preview-wrap { border: 0; }
+.overflow-flag {
+  border-left: 0;
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  background: var(--panel-2);
+  color: var(--muted);
+}
+.overflow-flag.show { display: block; }
+
+.status-box {
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  background: var(--panel-2);
+  line-height: 1.65;
+}
+.status-box:empty { display: none; }
+.status-box.ok { background: var(--panel-2); color: var(--ink); }
+.status-box.warn { background: var(--panel-2); color: var(--muted); }
+.status-box.error { background: var(--error-soft); color: var(--error); }
+.status-box .path { background: transparent; padding: 0; }
+
+.hint { line-height: 1.7; }
+.hint code { white-space: normal; overflow-wrap: anywhere; }
+
+details.readonly summary { font-weight: 600; }
+.ro-block h4 { font-weight: 500; }
+.stat b { font-weight: 600; }
+.tracker-table th { font-weight: 500; }
+.tr-company { font-weight: 500; }
+
+@media (max-width: 1120px) {
+  .layout { grid-template-columns: minmax(0, 1fr); padding: 16px 16px 60px; gap: 18px; }
+  .preview { order: -1; }
+}
+@media (max-width: 640px) {
+  .layout { padding: 12px 12px 56px; }
+  .editor-block { padding: 20px 0 8px; }
+  #groups .group-body { padding-left: 14px; }
+  #groups .group-warn { margin-left: 14px; }
+  .field-head { gap: 8px; }
+  .field-switch button { padding: 4px 6px; font-size: 11px; }
+}
+
 </style>
 </head>
 <body>
@@ -1075,10 +1201,7 @@ textarea.field-input:focus,
       <div class="block-head">
         <span class="block-no">02</span>
         <span class="block-title">编辑内容</span>
-        <span class="spacer"></span>
-        <span class="sub" id="fieldCount"></span>
       </div>
-      <div class="variant-bar" id="variantSwitch" hidden></div>
       <div id="groups"></div>
     </section>
 
@@ -1103,12 +1226,19 @@ textarea.field-input:focus,
       <div class="card actions">
         <div class="actions-row" id="actionsMain"></div>
         <div class="actions-row">
-          <button class="btn ghost small" id="resetAll">恢复模板原文</button>
-          <button class="btn ghost small" id="copyShare">复制分享链接</button>
-          <button class="btn ghost small" id="reloadTpl">重新加载模板</button>
+          <button class="btn small" id="resetAll" type="button">恢复模板原文</button>
+          <button class="btn small" id="copyShare" type="button">复制分享链接</button>
         </div>
-        <div class="hint" id="nameHint">填写后显示归档路径与文件名。</div>
-        <div class="status-box" id="status">加载中…</div>
+        <div class="theme-row">
+          <span class="field-label">主题</span>
+          <select class="theme-select" id="themeSelect" aria-label="主题">
+            <option value="system">跟随系统</option>
+            <option value="light">浅色</option>
+            <option value="dark">深色</option>
+          </select>
+        </div>
+        <div class="hint" id="nameHint"></div>
+        <div class="status-box" id="status"></div>
       </div>
     </section>
   </section>
@@ -1116,8 +1246,8 @@ textarea.field-input:focus,
   <aside class="preview" id="previewPane">
     <div class="card preview-bar">
       <span class="title">A4 预览</span>
-      <span class="scale" id="scaleLabel">—</span>
       <span class="spacer"></span>
+      <span class="scale" id="scaleLabel">—</span>
       <button class="btn small mobile-toggle" id="togglePreview">显示 / 隐藏预览</button>
     </div>
     <div class="card preview-wrap" id="previewWrap">
@@ -1168,16 +1298,6 @@ textarea.field-input:focus,
     </div>
   </main>
 
-
-<footer class="page-footer">
-  <label class="footer-theme">主题
-    <select class="theme-select" id="themeSelect" aria-label="主题">
-      <option value="system">跟随系统</option>
-      <option value="light">浅色</option>
-      <option value="dark">深色</option>
-    </select>
-  </label>
-</footer>
 
 <div class="modal" id="trackerModal" hidden>
   <div class="modal-box tracker-modal-box">
@@ -2118,7 +2238,7 @@ textarea.field-input:focus,
       ],
       notes: [
         '头部意向岗位可改；技能三行可改。',
-        '可编辑 20 个输入框。'
+        '可编辑 20 处内容。'
       ]
     },
     {
@@ -2170,7 +2290,7 @@ textarea.field-input:focus,
       ],
       notes: [
         '头部岗位与技能三行可改。',
-        '可编辑 21 个输入框。'
+        '可编辑 21 处内容。'
       ]
     }
   ];
@@ -2895,8 +3015,9 @@ textarea.field-input:focus,
     groupWarnEls: {},
     fieldEls: {},
     posAuto: { zh: true, en: true },
-    generated: { zh: {}, en: {} },
-    variants: { zh: null, en: null }
+    candidates: { zh: {}, en: {} },
+    choices: { zh: {}, en: {} },
+    aiSnapshot: null
   };
 
   var els = {};
@@ -2940,9 +3061,14 @@ textarea.field-input:focus,
     return state.values[id];
   }
 
-  function generatedFor(id) {
-    if (!state.generated[id]) state.generated[id] = {};
-    return state.generated[id];
+  function candidatesFor(id) {
+    if (!state.candidates[id]) state.candidates[id] = {};
+    return state.candidates[id];
+  }
+
+  function choicesFor(id) {
+    if (!state.choices[id]) state.choices[id] = {};
+    return state.choices[id];
   }
 
   function metaFor(id) {
@@ -3065,13 +3191,13 @@ textarea.field-input:focus,
       els.modeBadge.textContent = '本机版';
       els.modeBadge.title = '本机版：可归档到 output/，并生成服务端 PDF';
       els.btnExportTop.textContent = '导出';
-      els.btnExportTop.title = '生成并归档（HTML + PDF）';
+      els.btnExportTop.title = '生成并归档';
     } else {
       els.modeBadge.className = 'badge offline';
       els.modeBadge.textContent = '静态版';
       els.modeBadge.title = '静态版：用浏览器打印导出 PDF，不写本机文件';
       els.btnExportTop.textContent = '导出';
-      els.btnExportTop.title = '导出 PDF（打印）';
+      els.btnExportTop.title = '导出 PDF';
     }
     renderActions();
     updateNameHint();
@@ -3083,14 +3209,9 @@ textarea.field-input:focus,
   function renderActions() {
     els.actionsMain.innerHTML = '';
     if (state.local) {
-      els.actionsMain.appendChild(button('生成并归档（HTML + PDF）', 'primary', exportLocal));
-      els.actionsMain.appendChild(button('加入投递跟踪', '', trackCurrent));
-      els.actionsMain.appendChild(button('下载 HTML', '', downloadCurrent));
-      els.actionsMain.appendChild(button('导出 PDF（打印）', '', printCurrent));
+      els.actionsMain.appendChild(button('生成并归档', 'primary', exportLocal));
     } else {
-      els.actionsMain.appendChild(button('导出 PDF（打印）', 'primary', printCurrent));
-      els.actionsMain.appendChild(button('加入投递跟踪', '', trackCurrent));
-      els.actionsMain.appendChild(button('下载 HTML', '', downloadCurrent));
+      els.actionsMain.appendChild(button('导出 PDF', 'primary', printCurrent));
     }
   }
 
@@ -3117,13 +3238,9 @@ textarea.field-input:focus,
     });
 
     var loc = state.located[tpl.id];
-    var groups = tpl.groups.filter(function (g) {
-      return tpl.fields.some(function (f) { return f.group === g.id; });
-    });
-    els.fieldCount.textContent = tpl.fields.length + ' 个输入框 · ' + groups.length + ' 组';
 
     if (loc.errors.length) {
-      showBanner('模板字段定位失败：' + loc.errors.join('；') + '。请检查 template/ 是否被改动，或点「重新加载模板」。');
+      showBanner('模板字段定位失败：' + loc.errors.join('；') + '。请检查 template/ 是否被改动，或刷新页面。');
     } else {
       hideBanner();
     }
@@ -3145,7 +3262,7 @@ textarea.field-input:focus,
 
       var head = document.createElement('div');
       head.className = 'group-head';
-      head.innerHTML = '<span>' + escapeHtml(group.label) + '</span><span class="count">' + fields.length + ' 处可改</span>';
+      head.textContent = group.label;
       card.appendChild(head);
 
       var groupWarn = document.createElement('div');
@@ -3168,8 +3285,14 @@ textarea.field-input:focus,
     });
 
     renderBaseInfo();
-    renderVariantSwitch();
     updateSummary();
+  }
+
+  function fitFieldHeight(ta) {
+    if (!ta) return;
+    ta.style.height = 'auto';
+    var h = Math.min(Math.max(ta.scrollHeight, 58), 260);
+    ta.style.height = h + 'px';
   }
 
   function renderField(tplId, field, vals) {
@@ -3185,14 +3308,32 @@ textarea.field-input:focus,
     name.textContent = field.label;
 
     var right = document.createElement('span');
-    right.style.display = 'flex';
-    right.style.alignItems = 'center';
-    right.style.gap = '6px';
+    right.className = 'field-right';
 
-    var tag = document.createElement('span');
-    tag.className = 'field-tag';
-    tag.textContent = field.kind === 'single' ? '单句' : field.kind === 'para' ? '段落' : '列表项';
-    right.appendChild(tag);
+    var switcher = null;
+    var btnOriginal = null;
+    var btn1 = null;
+    var btn2 = null;
+    if (field.id !== 'head_position') {
+      switcher = document.createElement('span');
+      switcher.className = 'field-switch';
+      btnOriginal = document.createElement('button');
+      btnOriginal.type = 'button';
+      btnOriginal.textContent = '原文';
+      btnOriginal.dataset.switch = 'original';
+      btn1 = document.createElement('button');
+      btn1.type = 'button';
+      btn1.textContent = '生成1';
+      btn1.dataset.switch = '1';
+      btn2 = document.createElement('button');
+      btn2.type = 'button';
+      btn2.textContent = '生成2';
+      btn2.dataset.switch = '2';
+      switcher.appendChild(btnOriginal);
+      switcher.appendChild(btn1);
+      switcher.appendChild(btn2);
+      right.appendChild(switcher);
+    }
 
     head.appendChild(name);
     head.appendChild(right);
@@ -3203,57 +3344,63 @@ textarea.field-input:focus,
     ta.rows = Math.max(2, Math.min(9, Math.ceil(field.original.length / 42)));
     ta.spellcheck = false;
 
-    var genStore = generatedFor(tplId);
-    if (Core.normalizeText(ta.value) !== Core.normalizeText(field.original) && genStore[field.id] == null) {
-      genStore[field.id] = ta.value;
+    var cand = candidatesFor(tplId);
+    var choiceStore = choicesFor(tplId);
+    if (choiceStore[field.id] == null) choiceStore[field.id] = 'original';
+    var initialChoice = choiceStore[field.id];
+    if (field.id !== 'head_position' && (initialChoice === '1' || initialChoice === '2') &&
+        cand[field.id] && cand[field.id][initialChoice] != null) {
+      ta.value = cand[field.id][initialChoice];
+      vals[field.id] = ta.value;
     }
-    var switcher = document.createElement('span');
-    switcher.className = 'field-switch';
-    var btnOriginal = document.createElement('button');
-    btnOriginal.type = 'button';
-    btnOriginal.textContent = '原文';
-    btnOriginal.dataset.switch = 'original';
-    var btnGenerated = document.createElement('button');
-    btnGenerated.type = 'button';
-    btnGenerated.textContent = '生成';
-    btnGenerated.dataset.switch = 'generated';
-    switcher.appendChild(btnOriginal);
-    switcher.appendChild(btnGenerated);
-    right.appendChild(switcher);
+
+    function currentChoice() {
+      var c = choiceStore[field.id] || 'original';
+      if (c === 'original' && Core.normalizeText(ta.value) !== Core.normalizeText(field.original)) c = '';
+      if (c !== 'original' && !(cand[field.id] && cand[field.id][c] != null)) c = 'original';
+      return c;
+    }
 
     function updateSwitch() {
-      var isOrig = Core.normalizeText(ta.value) === Core.normalizeText(field.original);
-      btnOriginal.classList.toggle('active', isOrig);
-      btnGenerated.classList.toggle('active', !isOrig);
-      btnGenerated.disabled = isOrig && genStore[field.id] == null;
+      if (!switcher) return;
+      var c = currentChoice();
+      btnOriginal.classList.toggle('active', c === 'original');
+      btn1.classList.toggle('active', c === '1');
+      btn2.classList.toggle('active', c === '2');
+      btn1.disabled = !(cand[field.id] && cand[field.id]['1'] != null);
+      btn2.disabled = !(cand[field.id] && cand[field.id]['2'] != null);
       btnOriginal.title = '显示模板原文';
-      btnGenerated.title = genStore[field.id] == null ? '先生成一次' : '显示生成/最近修改的版本';
+      btn1.title = btn1.disabled ? '生成后可用' : '显示生成 1';
+      btn2.title = btn2.disabled ? '生成后可用' : '显示生成 2';
     }
 
     function setFieldMode(mode) {
       var next;
       if (mode === 'original') {
-        if (Core.normalizeText(ta.value) !== Core.normalizeText(field.original)) genStore[field.id] = ta.value;
         next = field.original;
       } else {
-        next = genStore[field.id];
+        next = cand[field.id] && cand[field.id][mode];
         if (next == null) return;
       }
+      choiceStore[field.id] = mode;
       ta.value = next;
       vals[field.id] = next;
       if (field.id === 'head_position') {
         state.posAuto[tplId] = false;
         applyPositionToHeader();
       }
+      delete state.lineStats[field.id];
       state.stale = true;
+      fitFieldHeight(ta);
       refreshMeta();
       updateSwitch();
       updateSummary();
       scheduleSave();
       schedulePreview(120);
     }
-    btnOriginal.addEventListener('click', function () { setFieldMode('original'); });
-    btnGenerated.addEventListener('click', function () { setFieldMode('generated'); });
+    if (btnOriginal) btnOriginal.addEventListener('click', function () { setFieldMode('original'); });
+    if (btn1) btn1.addEventListener('click', function () { setFieldMode('1'); });
+    if (btn2) btn2.addEventListener('click', function () { setFieldMode('2'); });
 
     var meta = document.createElement('div');
     meta.className = 'field-meta';
@@ -3262,36 +3409,43 @@ textarea.field-input:focus,
     msg.className = 'field-msg';
 
     function refreshMeta() {
-      if (field.id === 'head_position' && state.posAuto[tplId] !== false) {
-        meta.innerHTML = '跟随「岗位名称」：<span class="k">' + escapeHtml(ta.value) + '</span>';
-        msg.className = 'field-msg';
-        msg.textContent = '跟随岗位名称；可直接微调';
+      if (field.id === 'head_position') {
+        meta.hidden = true;
+        meta.textContent = '';
+        msg.hidden = true;
+        msg.textContent = '';
         wrap.dataset.level = 'ok';
         return;
       }
+      meta.hidden = false;
       var r = Core.validateField(field, ta.value);
       var s = r.stats;
-      var parts = [];
-      parts.push('新 <span class="k">' + s.newLen + '</span> 字');
-      parts.push('原 ' + s.origLen + ' 字');
-      parts.push('差 ' + (s.diff > 0 ? '+' : '') + s.diff);
-      if (field.minChars && field.maxChars) parts.push('可写 ' + field.minChars + '–' + field.maxChars + ' 字（一行）');
-      else if (field.maxChars) parts.push('上限 ' + field.maxChars + ' 字');
-      else if (field.minChars) parts.push('下限 ' + field.minChars + ' 字');
-      if (s.hasNumbers) {
-        parts.push('数字锁定 <span class="nums">' + escapeHtml(Core.numberTokens(field.original).join(' · ')) + '</span>');
+      var st = state.lineStats[field.id];
+      meta.textContent = '新 ' + s.newLen + ' 字　原 ' + s.origLen + ' 字　排版 ' + (st ? st.newLines : '—') + ' 行';
+      if (r.level === 'error') {
+        msg.hidden = false;
+        msg.className = 'field-msg error';
+        msg.textContent = r.messages.join('；');
+      } else {
+        msg.hidden = true;
+        msg.textContent = '';
+        msg.className = 'field-msg';
       }
-      meta.innerHTML = parts.join('　');
-      msg.className = 'field-msg' + (r.level === 'error' ? ' error' : r.level === 'warn' ? ' warn' : '');
-      msg.textContent = r.messages.join('；');
       wrap.dataset.level = r.level;
     }
 
     ta.addEventListener('input', function () {
       vals[field.id] = ta.value;
-      if (Core.normalizeText(ta.value) !== Core.normalizeText(field.original)) genStore[field.id] = ta.value;
+      var c = choiceStore[field.id] || 'original';
+      if ((c === '1' || c === '2') && cand[field.id]) {
+        cand[field.id][c] = ta.value;
+      } else if (c === 'original' && Core.normalizeText(ta.value) !== Core.normalizeText(field.original)) {
+        choiceStore[field.id] = '';
+      }
       if (field.id === 'head_position') state.posAuto[tplId] = false;
+      delete state.lineStats[field.id];
       state.stale = true;
+      fitFieldHeight(ta);
       refreshMeta();
       updateSwitch();
       updateSummary();
@@ -3302,15 +3456,15 @@ textarea.field-input:focus,
     refreshMeta();
     updateSwitch();
 
-    var lines = document.createElement('div');
-    lines.className = 'field-lines';
-
     wrap.appendChild(head);
     wrap.appendChild(ta);
     wrap.appendChild(meta);
     wrap.appendChild(msg);
-    wrap.appendChild(lines);
-    state.fieldEls[tplId + ':' + field.id] = { lines: lines, field: field, ta: ta, refresh: refreshMeta, updateSwitch: updateSwitch };
+    state.fieldEls[tplId + ':' + field.id] = {
+      field: field, ta: ta, meta: meta, msg: msg,
+      refresh: refreshMeta, updateSwitch: updateSwitch
+    };
+    setTimeout(function () { fitFieldHeight(ta); }, 0);
     return wrap;
   }
 
@@ -3333,31 +3487,7 @@ textarea.field-input:focus,
   }
 
   function updateSummary() {
-    var tpl = tplById(state.tplId);
-    var loc = state.located[tpl.id];
-    var vals = valuesFor(tpl.id);
-    var errors = 0;
-    var warns = 0;
-    var lineErrCount = Object.keys(state.lineErrors || {}).length;
-    loc.fields.forEach(function (f) {
-      var r = Core.validateField(f, vals[f.id]);
-      if (r.level === 'error') errors++;
-      else if (r.level === 'warn') warns++;
-    });
-    var groupWarnCount = updateGroupWarnings();
-    var el = els.fieldCount;
-    if (el) {
-      var groups = tpl.groups.filter(function (g) {
-        return tpl.fields.some(function (f) { return f.group === g.id; });
-      }).length;
-      el.textContent = tpl.fields.length + ' 个输入框 · ' + groups + ' 组' +
-        (errors ? ' · ' + errors + ' 处需修改' : '') +
-        (lineErrCount ? ' · ' + lineErrCount + ' 处超一行' : '') +
-        (state.wrapWarns ? ' · ' + state.wrapWarns + ' 处多一行' : '') +
-        (groupWarnCount ? ' · ' + groupWarnCount + ' 处开篇重复' : '') +
-        (!errors && !warns && !lineErrCount && !state.wrapWarns && !groupWarnCount ? ' · 全部通过' : (warns ? ' · ' + warns + ' 处建议调整' : ''));
-      el.style.color = (errors || lineErrCount) ? 'var(--error)' : (warns || state.wrapWarns || groupWarnCount) ? 'var(--warn)' : 'var(--ok)';
-    }
+    updateGroupWarnings();
     updateExportState();
   }
 
@@ -3529,27 +3659,20 @@ textarea.field-input:focus,
       if (!el) return;
       var st = state.lineStats[f.id];
       if (!st) {
-        el.lines.className = 'field-lines';
-        el.lines.textContent = '';
+        if (el.refresh) el.refresh();
         return;
       }
       var more = st.newLines - st.origLines;
       var mustOneLine = !!(hard && f.kind === 'bullet');
+      if (el.refresh) el.refresh();
       if (mustOneLine && st.newLines > 1) {
         state.lineErrors[f.id] = f.label + '：在 A4 上占 ' + st.newLines + ' 行，必须压到 1 行';
-        el.lines.className = 'field-lines error';
-        el.lines.textContent = '排版：现在 ' + st.newLines + ' 行，必须 1 行（再压缩）';
+        el.msg.hidden = false;
+        el.msg.className = 'field-msg error';
+        el.msg.textContent = '排版 ' + st.newLines + ' 行，需压到 1 行';
         return;
       }
-      el.lines.className = 'field-lines' + (more > 0 ? ' warn' : '');
-      if (more > 0) {
-        warns++;
-        el.lines.textContent = '排版：原文 ' + st.origLines + ' 行 → 现在 ' + st.newLines + ' 行（多 ' + more + ' 行，建议压回 ' + f.original.length + ' 字左右）';
-      } else if (more < 0) {
-        el.lines.textContent = '排版：原文 ' + st.origLines + ' 行 → 现在 ' + st.newLines + ' 行（少 ' + (-more) + ' 行）';
-      } else {
-        el.lines.textContent = '排版：' + st.newLines + ' 行，与原文一致';
-      }
+      if (more > 0) warns++;
     });
     state.wrapWarns = warns;
     updateSummary();
@@ -3624,13 +3747,13 @@ textarea.field-input:focus,
 
     var label;
     if (fit.mode === 'tight') {
-      label = '宽度 <b>100%</b> · 字号 100% · 行距收紧到 <b>' + Math.round(fit.f * 100) + '%</b>';
+      label = '1页 行距缩放至 ' + Math.round(fit.f * 100) + '%';
     } else if (fit.mode === 'zoom') {
-      label = '整体缩放 <b>' + (fit.k * 100).toFixed(1) + '%</b>';
+      label = '1页 整体缩放至 ' + (fit.k * 100).toFixed(1) + '%';
     } else {
-      label = '宽度 <b>100%</b> · 原始行距';
+      label = '1页 行距缩放至 100%';
     }
-    els.scaleLabel.innerHTML = label + (fit.overflow ? ' · 超过一页' : ' · 1 页');
+    els.scaleLabel.textContent = fit.overflow ? '超过 1 页' : label;
     els.overflowFlag.className = 'overflow-flag' + (fit.overflow ? ' show' : '');
     els.overflowFlag.textContent = fit.overflow
       ? '内容超过一页（已到缩放下限 55%）：建议精简改写文字，否则 PDF 会变成两页。'
@@ -3714,10 +3837,11 @@ textarea.field-input:focus,
     }
     els.nameHint.className = 'hint';
     if (state.local) {
-      els.nameHint.innerHTML = '归档到 <code>output/' + escapeHtml(n.names.folder) + '/</code><br>' +
-        '文件：<code>' + escapeHtml(n.names.html) + '</code> · <code>' + escapeHtml(n.names.pdf) + '</code>';
+      els.nameHint.innerHTML = '归档到 <code>output/' + escapeHtml(n.names.folder) + '/</code><br><br>' +
+        '文件：<br><code>' + escapeHtml(n.names.html) + '</code><br><br>' +
+        '<code>' + escapeHtml(n.names.pdf) + '</code>';
     } else {
-      els.nameHint.innerHTML = '下载文件名：<code>' + escapeHtml(n.names.html) + '</code>';
+      els.nameHint.innerHTML = '下载文件名：<br><code>' + escapeHtml(n.names.html) + '</code>';
     }
     updateExportState();
   }
@@ -3840,6 +3964,7 @@ textarea.field-input:focus,
     lines.push('【待改写文本】');
     if (loc) {
       loc.fields.forEach(function (f) {
+        if (f.id === 'head_position') return;
         var orig = f.original;
         var current = vals[f.id] == null ? orig : vals[f.id];
         var nums = Core.numberTokens(orig);
@@ -3993,6 +4118,7 @@ textarea.field-input:focus,
     var groupLabels = {};
     (tpl.groups || []).forEach(function (g) { groupLabels[g.id] = g.label; });
     loc.fields.forEach(function (f) {
+      if (f.id === 'head_position') return;
       texts[f.id] = Core.normalizeText(vals[f.id]);
       constraints[f.id] = {
         label: f.label,
@@ -4056,96 +4182,6 @@ textarea.field-input:focus,
     return [{ role: 'system', content: system }, { role: 'user', content: user }];
   }
 
-  function scoreVariant(fullVals, tpl, loc) {
-    var score = 0;
-    loc.fields.forEach(function (f) {
-      var r = Core.validateField(f, fullVals[f.id]);
-      if (r.level === 'error') score -= 100;
-      if (r.stats.newLen >= f.original.length) score += 6;
-      if (f.maxChars && r.stats.newLen <= f.maxChars) score += 4;
-      if (r.level === 'warn') score -= 2;
-    });
-    var text = loc.fields.map(function (f) { return fullVals[f.id] || ''; }).join('\n').toLowerCase();
-    activeKeywords().forEach(function (k) {
-      if (text.indexOf(String(k).toLowerCase()) >= 0) score += 3;
-    });
-    return score;
-  }
-
-  function renderVariantSwitch() {
-    if (!els.variantSwitch) return;
-    var pack = state.variants[state.tplId];
-    if (!pack || pack.list.length < 2) {
-      els.variantSwitch.hidden = true;
-      els.variantSwitch.innerHTML = '';
-      return;
-    }
-    els.variantSwitch.hidden = false;
-    els.variantSwitch.innerHTML = '';
-    var label = document.createElement('span');
-    label.className = 'variant-label';
-    label.textContent = '生成版本';
-    els.variantSwitch.appendChild(label);
-    pack.list.forEach(function (item, i) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.textContent = '版本 ' + (i + 1) + (i === pack.best ? '（推荐）' : '');
-      if (i === pack.index) b.className = 'active';
-      if (i === pack.best) b.classList.add('recommend');
-      b.addEventListener('click', function () {
-        if (state.variants[state.tplId] && state.variants[state.tplId].index !== i) {
-          applyVariant(i, '已切换');
-        }
-      });
-      els.variantSwitch.appendChild(b);
-    });
-  }
-
-  async function applyVariant(index, label) {
-    var tpl = tplById(state.tplId);
-    var loc = state.located[tpl.id];
-    var pack = state.variants[tpl.id];
-    if (!pack || !pack.list[index]) return;
-    var item = pack.list[index];
-    var vals = valuesFor(tpl.id);
-    Object.keys(item.values).forEach(function (id) { vals[id] = item.values[id]; });
-    pack.index = index;
-    if (item.map && item.map.head_position) state.posAuto[tpl.id] = false;
-    state.generated[tpl.id] = {};
-    loc.fields.forEach(function (f) {
-      if (vals[f.id] != null && Core.normalizeText(vals[f.id]) !== Core.normalizeText(f.original)) {
-        state.generated[tpl.id][f.id] = vals[f.id];
-      }
-      var el = state.fieldEls[tpl.id + ':' + f.id];
-      if (el && el.ta && vals[f.id] != null) {
-        el.ta.value = vals[f.id];
-        if (el.refresh) el.refresh();
-        if (el.updateSwitch) el.updateSwitch();
-      }
-    });
-    renderVariantSwitch();
-    els.btnUndo.disabled = false;
-    state.stale = true;
-    updateSummary();
-    scheduleSave();
-    await refreshPreview(true);
-
-    var applied = Object.keys(item.map || {}).length;
-    var problems = validateEverything();
-    var msg = (label || '切换版本') + '：已应用' + (index === pack.best ? '推荐版本 ' : '版本 ') + (index + 1)
-      + '（' + applied + ' 条）';
-    if (problems.length) {
-      msg += '；' + problems.length + ' 项数字/长度有问题，已在下面标红，修好再导出';
-      setGenerateStatus(msg, 'error');
-    } else if (state.wrapWarns) {
-      msg += '；' + state.wrapWarns + ' 条多占一行，建议压回原文长度';
-      setGenerateStatus(msg, 'warn');
-    } else {
-      msg += '；字数、数字、行数检查通过，可以导出';
-      setGenerateStatus(msg, 'ok');
-    }
-  }
-
   async function generateWithAi() {
     if (aiBusy) return;
     var position = els.position.value.trim();
@@ -4176,48 +4212,81 @@ textarea.field-input:focus,
     els.btnGenerate.textContent = '生成中…';
     try {
       var messages = buildAiMessages(tpl, position, jd);
-      var temps = [0.3, 0.6, 0.9];
-      var maps = [];
+      var temps = [0.35, 0.8];
+      var maps = [null, null];
       var lastError = null;
-      for (var i = 0; i < 3; i++) {
-        setGenerateStatus('正在生成 3 个版本（' + (i + 1) + '/3）…', 'busy');
+      for (var i = 0; i < 2; i++) {
+        setGenerateStatus('正在生成 2 个版本（' + (i + 1) + '/2）…', 'busy');
         try {
           var variantMessages = messages.concat([{
             role: 'user',
-            content: '这是第 ' + (i + 1) + '/3 个版本：请换一种表达方式（句式、动词、信息顺序不同），事实、数字和关键词不变；仍然必须满足每条的 minLength / maxLength，并保持自然、不注水。'
+            content: '这是第 ' + (i + 1) + '/2 个版本：请换一种表达方式（句式、动词、信息顺序不同），事实、数字和关键词不变；仍然必须满足每条的 minLength / maxLength，并保持自然、不注水。'
           }]);
           var content = await callAi(variantMessages, 4000, temps[i]);
           var map = Core.parseFieldPayload(content, loc.fields);
-          if (Object.keys(map).length) maps.push(map);
+          if (Object.keys(map).length) maps[i] = map;
         } catch (e) {
           lastError = e;
         }
       }
-      if (!maps.length) throw (lastError || new Error('AI 没有返回可解析的字段'));
-      var baseVals = JSON.parse(JSON.stringify(valuesFor(tpl.id)));
-      var list = maps.map(function (map) {
-        var full = JSON.parse(JSON.stringify(baseVals));
-        Object.keys(map).forEach(function (id) {
-          if (full[id] != null) full[id] = Core.normalizeText(map[id]);
-        });
-        return { map: map, values: full, score: scoreVariant(full, tpl, loc) };
-      });
-      var best = 0;
-      for (var j = 1; j < list.length; j++) {
-        if (list[j].score > list[best].score) best = j;
-      }
-      state.variants[tpl.id] = {
-        list: list,
-        best: best,
-        index: best,
-        baseValues: baseVals
-      };
-      state.aiSnapshot = {
+      if (!maps[0] && !maps[1]) throw (lastError || new Error('AI 没有返回可解析的字段'));
+
+      var prev = {
         tplId: tpl.id,
         posAuto: state.posAuto[tpl.id],
-        values: JSON.parse(JSON.stringify(baseVals))
+        values: JSON.parse(JSON.stringify(valuesFor(tpl.id))),
+        candidates: JSON.parse(JSON.stringify(candidatesFor(tpl.id))),
+        choices: JSON.parse(JSON.stringify(choicesFor(tpl.id)))
       };
-      await applyVariant(best, 'AI 生成');
+      state.candidates[tpl.id] = {};
+      state.choices[tpl.id] = {};
+      var known = {};
+      loc.fields.forEach(function (f) { known[f.id] = true; });
+
+      maps.forEach(function (map, index) {
+        if (!map) return;
+        Object.keys(map).forEach(function (id) {
+          if (!known[id] || id === 'head_position') return;
+          var text = Core.normalizeText(map[id]);
+          if (!text) return;
+          if (!state.candidates[tpl.id][id]) state.candidates[tpl.id][id] = {};
+          state.candidates[tpl.id][id][String(index + 1)] = text;
+        });
+      });
+
+      var vals = valuesFor(tpl.id);
+      var filledFields = 0;
+      loc.fields.forEach(function (f) {
+        if (f.id === 'head_position') return;
+        var pack = state.candidates[tpl.id][f.id];
+        if (pack && pack['1'] != null) {
+          state.choices[tpl.id][f.id] = '1';
+          vals[f.id] = pack['1'];
+          filledFields++;
+        } else {
+          state.choices[tpl.id][f.id] = 'original';
+          vals[f.id] = f.original;
+          if (pack && pack['2'] != null) filledFields++;
+        }
+      });
+      if (!filledFields) throw new Error('AI 返回了内容，但没有可用的简历字段');
+
+      state.aiSnapshot = prev;
+      els.btnUndo.disabled = false;
+      state.lineStats = {};
+      state.stale = true;
+      renderGroups();
+      scheduleSave();
+      await refreshPreview(true);
+
+      var problems = validateEverything();
+      var msg = 'AI 生成：已填入 ' + filledFields + ' 个要点的版本，默认使用生成 1';
+      if (problems.length) {
+        msg += '；' + problems.length + ' 项数字/长度有问题，已在下面标红，修好再导出';
+        setGenerateStatus(msg, 'error');
+      } else {
+        setGenerateStatus(msg, 'ok');
+      }
     } catch (e) {
       setGenerateStatus('生成失败：' + (e.message || e) + '。可重试、换模型，或用「复制改写提示词」交给别的 AI。', 'error');
     } finally {
@@ -4233,41 +4302,41 @@ textarea.field-input:focus,
     if (!loc) throw new Error('模板未加载');
     var known = {};
     loc.fields.forEach(function (f) { known[f.id] = true; });
-    state.variants[tpl.id] = null;
-    renderVariantSwitch();
     var vals = valuesFor(tpl.id);
     var snapshot = {
       tplId: state.tplId,
       posAuto: state.posAuto[state.tplId],
-      values: JSON.parse(JSON.stringify(vals))
+      values: JSON.parse(JSON.stringify(vals)),
+      candidates: JSON.parse(JSON.stringify(candidatesFor(tpl.id))),
+      choices: JSON.parse(JSON.stringify(choicesFor(tpl.id)))
     };
     var applied = 0;
     var changed = 0;
-    state.generated[tpl.id] = {};
     Object.keys(map || {}).forEach(function (id) {
       if (!known[id]) return;
       var text = Core.normalizeText(map[id]);
       if (!text) return;
+      if (id === 'head_position') {
+        if (text !== vals[id]) changed++;
+        vals[id] = text;
+        state.posAuto[tpl.id] = false;
+        applied++;
+        return;
+      }
       if (text !== vals[id]) changed++;
+      if (!state.candidates[tpl.id][id]) state.candidates[tpl.id][id] = {};
+      state.candidates[tpl.id][id]['1'] = text;
+      state.choices[tpl.id][id] = '1';
       vals[id] = text;
-      state.generated[tpl.id][id] = text;
       applied++;
     });
     if (!applied) throw new Error('没有解析到可替换的字段');
     state.aiSnapshot = snapshot;
 
-    if (map.head_position) state.posAuto[state.tplId] = false;
-    loc.fields.forEach(function (f) {
-      var el = state.fieldEls[tpl.id + ':' + f.id];
-      if (el && el.ta && vals[f.id] != null) {
-        el.ta.value = vals[f.id];
-        if (el.refresh) el.refresh();
-        if (el.updateSwitch) el.updateSwitch();
-      }
-    });
     els.btnUndo.disabled = false;
+    state.lineStats = {};
     state.stale = true;
-    updateSummary();
+    renderGroups();
     scheduleSave();
     await refreshPreview(true);
     try {
@@ -4277,15 +4346,11 @@ textarea.field-input:focus,
     } catch (e) { /* 忽略 */ }
 
     var problems = validateEverything();
-    var msg = label + '：已应用 ' + applied + ' 条（改动 ' + changed + ' 条）';
+    var msg = label + '：已填入生成 1，共 ' + applied + ' 条';
     if (problems.length) {
       msg += '；' + problems.length + ' 项数字/长度有问题，已在下面标红，修好再导出';
       setGenerateStatus(msg, 'error');
-    } else if (state.wrapWarns) {
-      msg += '；' + state.wrapWarns + ' 条多占一行，建议压回原文长度';
-      setGenerateStatus(msg, 'warn');
     } else {
-      msg += '；字数、数字、行数检查通过，可以导出';
       setGenerateStatus(msg, 'ok');
     }
     return { applied: applied, changed: changed };
@@ -4295,32 +4360,19 @@ textarea.field-input:focus,
     var snap = state.aiSnapshot;
     if (!snap) return;
     if (snap.tplId !== state.tplId) {
-      setGenerateStatus('撤销只对同一次生成有效（请切回对应版本再撤销）', 'error');
+      setGenerateStatus('撤销只对同一次生成有效（请切回对应模板再撤销）', 'error');
       return;
     }
     var vals = valuesFor(state.tplId);
     Object.keys(snap.values).forEach(function (id) { vals[id] = snap.values[id]; });
+    state.candidates[state.tplId] = JSON.parse(JSON.stringify(snap.candidates || {}));
+    state.choices[state.tplId] = JSON.parse(JSON.stringify(snap.choices || {}));
     state.posAuto[state.tplId] = snap.posAuto !== false;
-    var tpl = tplById(state.tplId);
-    var loc = state.located[tpl.id];
-    state.generated[state.tplId] = {};
-    loc.fields.forEach(function (f) {
-      if (vals[f.id] != null && Core.normalizeText(vals[f.id]) !== Core.normalizeText(f.original)) {
-        state.generated[state.tplId][f.id] = vals[f.id];
-      }
-      var el = state.fieldEls[tpl.id + ':' + f.id];
-      if (el && el.ta && vals[f.id] != null) {
-        el.ta.value = vals[f.id];
-        if (el.refresh) el.refresh();
-        if (el.updateSwitch) el.updateSwitch();
-      }
-    });
     state.aiSnapshot = null;
-    state.variants[state.tplId] = null;
-    renderVariantSwitch();
     els.btnUndo.disabled = true;
+    state.lineStats = {};
     state.stale = true;
-    updateSummary();
+    renderGroups();
     scheduleSave();
     await refreshPreview(true);
     setGenerateStatus('已撤销上一次生成，恢复到生成前的文字。', 'ok');
@@ -4383,7 +4435,7 @@ textarea.field-input:focus,
 
   function buildExportHtml() {
     var tpl = tplById(state.tplId);
-    if (!state.fit || state.fit.error) throw new Error('预览尚未就绪，请稍等一秒再试');
+    if (!state.fit || state.fit.error) throw new Error('预览还没生成完成，请稍等一秒再试');
     if (tpl.photo && !state.photoData) {
       throw new Error('照片读取失败（template/photo.jpeg）：为保证生成的 HTML 自包含且不丢图，已阻止导出');
     }
@@ -4473,7 +4525,7 @@ textarea.field-input:focus,
         w = window.open('', '_blank');
       }
       if (!w) {
-        setStatus('浏览器拦截了新窗口：请允许弹窗，或先用「下载 HTML」再打开打印。', 'warn');
+        setStatus('浏览器拦截了新窗口：请允许弹窗后重试，或改用本机版生成 PDF。', 'warn');
         return;
       }
       w.document.open();
@@ -4532,9 +4584,9 @@ textarea.field-input:focus,
         throw new Error((data && data.error) || ('HTTP ' + res.status));
       }
       var lines = [];
-      lines.push('已生成并归档（' + (data.pages || 1) + ' 页 · 缩放 ' + Math.round((data.scale || 1) * 1000) / 10 + '%）');
+      lines.push('已生成并归档 · ' + (data.pages || 1) + ' 页 · 缩放 ' + Math.round((data.scale || 1) * 1000) / 10 + '%');
       lines.push('HTML：<span class="path">' + escapeHtml(data.htmlRel) + '</span>　<a href="' + data.htmlUrl + '" target="_blank" rel="noopener">打开</a>');
-      lines.push('PDF ：<span class="path">' + escapeHtml(data.pdfRel) + '</span>　<a href="' + data.pdfUrl + '" target="_blank" rel="noopener">打开</a>　<a href="' + data.pdfUrl + '&download=1">下载</a>');
+      lines.push('PDF：<span class="path">' + escapeHtml(data.pdfRel) + '</span>　<a href="' + data.pdfUrl + '" target="_blank" rel="noopener">打开</a>　<a href="' + data.pdfUrl + '&download=1">下载</a>');
       if (data.backupRel) lines.push('旧版本已备份到：<span class="path">' + escapeHtml(data.backupRel) + '</span>');
       lines.push('台账：<span class="path">' + escapeHtml(data.ledgerRel) + '</span>');
       setStatusHtml(lines.join('<br>'), 'ok');
@@ -4605,7 +4657,9 @@ textarea.field-input:focus,
         localStorage.setItem(DRAFT_KEY, JSON.stringify({
           l: state.tplId,
           m: state.meta,
-          v: state.values
+          v: state.values,
+          c: state.candidates,
+          ch: state.choices
         }));
       } catch (e) { /* 隐私模式忽略 */ }
     }, 500);
@@ -4683,9 +4737,31 @@ textarea.field-input:focus,
         });
       });
     }
+    if (src.c) {
+      Object.keys(src.c).forEach(function (tid) {
+        if (!state.candidates[tid]) state.candidates[tid] = {};
+        Object.keys(src.c[tid] || {}).forEach(function (fid) {
+          state.candidates[tid][fid] = src.c[tid][fid];
+        });
+      });
+    }
+    if (src.ch) {
+      Object.keys(src.ch).forEach(function (tid) {
+        if (!state.choices[tid]) state.choices[tid] = {};
+        Object.keys(src.ch[tid] || {}).forEach(function (fid) {
+          state.choices[tid][fid] = src.ch[tid][fid];
+        });
+      });
+    }
 
     var version = src.ver || src.l || src.t || state.tplId;
-    state.tplId = tplById(version).id;
+    var explicitVersion = null;
+    try { explicitVersion = new URLSearchParams(location.search).get('v'); } catch (e) { explicitVersion = null; }
+    if (explicitVersion === 'zh' || explicitVersion === 'en') {
+      state.tplId = explicitVersion;
+    } else {
+      state.tplId = tplById(version).id;
+    }
 
     // 兼容旧格式：{t, c, p, n, v}（一个版本共用的公司/岗位）
     if (!src.m) {
@@ -4715,9 +4791,12 @@ textarea.field-input:focus,
     var loc = state.located[tpl.id];
     if (!loc) return;
     var vals = valuesFor(tpl.id);
-    state.generated[tpl.id] = {};
-    state.variants[tpl.id] = null;
+    state.candidates[tpl.id] = {};
+    state.choices[tpl.id] = {};
+    state.aiSnapshot = null;
+    els.btnUndo.disabled = true;
     loc.fields.forEach(function (f) { vals[f.id] = f.original; });
+    state.lineStats = {};
     renderGroups();
     scheduleSave();
     schedulePreview(120);
@@ -4727,12 +4806,12 @@ textarea.field-input:focus,
 
   function cacheEls() {
     ['mainTabs', 'resumeView', 'trackerView', 'tplSwitch', 'modeBadge', 'btnExportTop', 'banner', 'company', 'position', 'jd', 'keywords', 'note', 'nameHint',
-      'fieldCount', 'groups', 'baseInfoBody', 'actionsMain', 'status',
+      'groups', 'baseInfoBody', 'actionsMain', 'status',
       'previewPane', 'previewWrap', 'scaleLabel', 'previewFrame', 'overflowFlag', 'pageShell',
-      'togglePreview', 'resetAll', 'copyShare', 'reloadTpl', 'themeSelect', 'btnTrackTop',
+      'togglePreview', 'resetAll', 'copyShare', 'themeSelect', 'btnTrackTop',
       'matchSummary', 'kwChips', 'btnPrompt', 'promptModal', 'promptText', 'promptCopy', 'promptClose',
       'btnGenerate', 'btnAiSettings', 'btnUndo', 'aiStatus', 'generateStatus', 'pasteText', 'btnApplyPaste',
-      'aiModal', 'aiEndpoint', 'aiModel', 'aiKey', 'aiSave', 'aiTest', 'aiClear', 'aiTestResult', 'aiClose', 'aiPreset', 'source', 'variantSwitch'].forEach(function (id) {
+      'aiModal', 'aiEndpoint', 'aiModel', 'aiKey', 'aiSave', 'aiTest', 'aiClear', 'aiTestResult', 'aiClose', 'aiPreset', 'source'].forEach(function (id) {
       els[id] = byId(id);
     });
     els.frame = els.previewFrame;
@@ -4746,6 +4825,7 @@ textarea.field-input:focus,
     state.lineErrors = {};
     state.keywordText = '';
     state.wrapWarns = 0;
+    if (els.btnUndo) els.btnUndo.disabled = !state.aiSnapshot || state.aiSnapshot.tplId !== id;
     syncInputsFromMeta();
     updateUrl();
     renderTemplateChrome();
@@ -4758,26 +4838,6 @@ textarea.field-input:focus,
     layoutPreview();
     refreshPreview(true);
     scheduleSave();
-  }
-
-  async function reloadTemplates() {
-    state.sources = {};
-    state.located = {};
-    state.variants[state.tplId] = null;
-    state.generated[state.tplId] = {};
-    try {
-      await loadTemplates();
-      renderTemplateChrome();
-      renderGroups();
-      recomputePosAuto(state.tplId);
-      applyPositionToHeader();
-      updateNameHint();
-      updateSummary();
-      await refreshPreview(true);
-      setStatus('模板已重新加载：' + TEMPLATES.map(function (t) { return t.file; }).join(' · '), 'ok');
-    } catch (e) {
-      showBanner('重新加载失败：' + (e.message || e) + '（请检查 template/ 文件是否存在）');
-    }
   }
 
   function bind() {
@@ -4813,7 +4873,6 @@ textarea.field-input:focus,
     });
 
     els.copyShare.addEventListener('click', copyShare);
-    els.reloadTpl.addEventListener('click', reloadTemplates);
 
     els.btnPrompt.addEventListener('click', openPrompt);
     els.promptCopy.addEventListener('click', copyPrompt);
@@ -4904,6 +4963,9 @@ textarea.field-input:focus,
 
     window.addEventListener('resize', function () {
       layoutPreview();
+      Object.keys(state.fieldEls).forEach(function (key) {
+        fitFieldHeight(state.fieldEls[key].ta);
+      });
     });
     if (window.ResizeObserver) {
       var ro = new ResizeObserver(function () { layoutPreview(); });
@@ -4957,8 +5019,7 @@ textarea.field-input:focus,
     } else {
       state.stale = true;
     }
-
-    setStatus('就绪', '');
+    setStatus('');
   }
 
   if (document.readyState === 'loading') {
