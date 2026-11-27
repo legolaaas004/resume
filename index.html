@@ -19,7 +19,12 @@
   function apply(mode) {
     root.setAttribute('data-theme-mode', mode);
     root.setAttribute('data-theme', effective(mode));
+    window.__syncThemeLabel();
   }
+  window.__syncThemeLabel = function () {
+    var btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = '主题 · ' + (root.getAttribute('data-theme') === 'dark' ? '深色' : '浅色');
+  };
   var mode = 'system';
   try {
     var saved = localStorage.getItem(KEY);
@@ -30,8 +35,6 @@
     mode = (next === 'light' || next === 'dark') ? next : 'system';
     try { localStorage.setItem(KEY, mode); } catch (e) { /* 忽略 */ }
     apply(mode);
-    var select = document.getElementById('themeSelect');
-    if (select) select.value = mode;
   };
   try {
     var mq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -55,13 +58,13 @@
   --line: #e3e6ea;
   --line-strong: #cfd4da;
 
-  --accent: #2f343a;
-  --accent-hover: #1f2429;
-  --accent-soft: #eef0f2;
+  --accent: #1a7f37;
+  --accent-hover: #116329;
+  --accent-soft: #dafbe1;
   --accent-ink: #ffffff;
 
-  --ok: #2f343a;
-  --ok-soft: #eef0f2;
+  --ok: #1a7f37;
+  --ok-soft: #dafbe1;
   --warn: #667085;
   --warn-soft: #f0f1f3;
   --error: #b42318;
@@ -90,13 +93,13 @@
   --line: #30363d;
   --line-strong: #484f58;
 
-  --accent: #1f6feb;
-  --accent-hover: #388bfd;
-  --accent-soft: #1f6feb33;
+  --accent: #2ea043;
+  --accent-hover: #3fb950;
+  --accent-soft: #1b4721;
   --accent-ink: #ffffff;
 
-  --ok: #58a6ff;
-  --ok-soft: #1f6feb22;
+  --ok: #3fb950;
+  --ok-soft: #1b4721;
   --warn: #8b949e;
   --warn-soft: #21262d;
   --error: #f85149;
@@ -1374,20 +1377,139 @@ details.readonly summary { font-weight: 600; }
 .splitter::before { display: none; }
 .splitter.dragging::after { color: var(--accent); opacity: 1; }
 
+
+/* ---------- v5：三行顶栏 / 绿色主题 / 跟踪表格 ---------- */
+.topbar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 10px 22px 0;
+}
+.topbar-line { display: flex; align-items: center; gap: 12px; width: 100%; }
+.topbar-line-1 { min-height: 30px; }
+.topbar-line-1 .badge { margin-left: auto; }
+.topbar-line-2 { margin-top: 4px; }
+.topbar-line-2 .main-tabs { width: 100%; margin-left: 0; }
+.topbar-line-2 .main-tabs button { flex: 1 1 0; }
+.topbar-line-3 { padding: 8px 0 10px; }
+.topbar-line-3 .spacer { flex: 1 1 auto; }
+
+/* 主题：一个居中的切换按钮，不用下拉 */
+.theme-toggle {
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+}
+
+/* 跟踪表格：全部水平居中 */
+.tracker-table { min-width: 1080px; }
+.tracker-table th,
+.tracker-table td {
+  text-align: center;
+  vertical-align: middle;
+}
+.tr-company,
+.tr-position { text-align: center; }
+.tr-note {
+  max-width: 240px;
+  color: var(--muted);
+  text-align: center;
+}
+.tr-link {
+  max-width: 220px;
+  text-align: center;
+  word-break: break-all;
+}
+.tr-link a { word-break: break-all; }
+.tr-actions { text-align: center; white-space: nowrap; }
+.tracker-status-select {
+  height: 30px;
+  width: 96px;
+  padding: 0 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--ink);
+  text-align: center;
+  text-align-last: center;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.tracker-status-select:focus { border-color: var(--accent); outline: none; }
+.resume-open {
+  height: 30px;
+  min-width: 0;
+  padding: 0 8px;
+  font-size: 11.5px;
+}
+.tracker-table .btn.ghost {
+  height: 28px;
+  min-height: 28px;
+  padding: 0 5px;
+  border: 0;
+}
+
+@media (max-width: 1120px) {
+  .topbar { padding: 8px 16px 0; }
+}
+@media (max-width: 640px) {
+  .topbar { padding: 8px 12px 0; }
+  .topbar-line { flex-wrap: wrap; gap: 8px; }
+  .topbar-line-1 .brand { flex: 1 1 100%; }
+  .topbar-line-2 .main-tabs button { flex: 1; }
+  .topbar-line-3 { padding-bottom: 8px; }
+  .topbar-line-3 .spacer { display: none; }
+  .topbar-line-3 .tpl-switch { flex: 1 0 100%; }
+  .tracker-table { min-width: 980px; }
+}
+
+@media (max-width: 640px) {
+  .topbar #btnTrackTop,
+  .topbar #btnExportTop {
+    display: inline-flex !important;
+    flex: 1 1 0;
+    min-width: 0;
+    margin-top: 2px;
+  }
+  .topbar-line-3 .spacer { display: none; }
+  .topbar-line-3 #btnTrackTop { margin-left: 0; }
+}
+
+@media (max-width: 640px) {
+  .topbar-line-3 .tpl-switch { order: 1; }
+  .topbar-line-3 #btnTrackTop { order: 2; }
+  .topbar-line-3 #btnExportTop { order: 3; }
+}
+
+@media (max-width: 640px) {
+  .topbar-line-3 #tplSwitch { order: 1; }
+  .topbar-line-3 #btnTrackTop { order: 2; }
+  .topbar-line-3 #btnExportTop { order: 3; }
+}
+
 </style>
 </head>
 <body>
 <header class="topbar">
-  <div class="brand">简历生成器 · Resume Tailor</div>
-  <div class="seg main-tabs" id="mainTabs" role="tablist" aria-label="主功能">
-    <button type="button" data-view="resume" aria-pressed="true">简历修改</button>
-    <button type="button" data-view="tracker" aria-pressed="false">投递跟踪 <span class="tab-badge" id="trackerBadge" hidden>0</span></button>
+  <div class="topbar-line topbar-line-1">
+    <div class="brand">简历生成器 · Resume Tailor</div>
+    <span class="spacer"></span>
+    <span class="badge offline" id="modeBadge">检测环境…</span>
   </div>
-  <span class="spacer"></span>
-  <div class="seg tpl-switch" id="tplSwitch" role="group" aria-label="模板切换"></div>
-  <span class="badge offline" id="modeBadge">检测环境…</span>
-  <button class="btn small" id="btnTrackTop" type="button">加入跟踪</button>
-  <button class="btn small primary" id="btnExportTop">导出</button>
+  <div class="topbar-line topbar-line-2">
+    <div class="seg main-tabs" id="mainTabs" role="tablist" aria-label="主功能">
+      <button type="button" data-view="resume" aria-pressed="true">简历修改</button>
+      <button type="button" data-view="tracker" aria-pressed="false">投递跟踪 <span class="tab-badge" id="trackerBadge" hidden>0</span></button>
+    </div>
+  </div>
+  <div class="topbar-line topbar-line-3">
+    <div class="seg tpl-switch" id="tplSwitch" role="group" aria-label="模板切换"></div>
+    <span class="spacer"></span>
+    <button class="btn small" id="btnTrackTop" type="button">加入跟踪</button>
+    <button class="btn small primary" id="btnExportTop">导出</button>
+  </div>
 </header>
 
 <div class="banner" id="banner"></div>
@@ -1478,14 +1600,7 @@ details.readonly summary { font-weight: 600; }
       <div class="card actions">
         <div class="actions-grid">
           <div class="action-cell" id="actionsMain"></div>
-          <label class="action-cell theme-tile">
-            <span>主题</span>
-            <select class="theme-select" id="themeSelect" aria-label="主题">
-              <option value="system">跟随系统</option>
-              <option value="light">浅色</option>
-              <option value="dark">深色</option>
-            </select>
-          </label>
+          <button class="btn action-cell theme-toggle" id="themeToggle" type="button">主题 · 浅色</button>
           <button class="btn" id="resetAll" type="button">恢复模板原文</button>
           <button class="btn" id="copyShare" type="button">复制分享链接</button>
         </div>
@@ -1520,7 +1635,7 @@ details.readonly summary { font-weight: 600; }
   <main class="tracker-view" id="trackerView" hidden>
     <div class="tracker-inner">
       <div class="card">
-        <div class="card-title">投递跟踪 <span class="sub">数据只存在当前浏览器；可导出 CSV / 图片备份，也可导入恢复</span></div>
+        <div class="card-title">投递跟踪</div>
         <div class="stats" id="trackerStats"></div>
         <div class="tracker-toolbar">
           <input class="input" id="trackerSearch" placeholder="搜索公司 / 岗位 / 备注" autocomplete="off">
@@ -1528,7 +1643,6 @@ details.readonly summary { font-weight: 600; }
           <button class="btn primary" id="trackerAdd" type="button">+ 新增投递</button>
           <button class="btn small" id="trackerExport" type="button">导出 CSV</button>
           <button class="btn small" id="trackerImage" type="button">导出图片</button>
-          <label class="btn small">导入 CSV<input id="trackerImport" type="file" accept=".csv,text/csv" hidden></label>
         </div>
         <div class="hint" id="trackerStatus"></div>
       </div>
@@ -1537,18 +1651,20 @@ details.readonly summary { font-weight: 600; }
         <table class="tracker-table">
           <thead>
             <tr>
-              <th>公司 / 岗位</th>
+              <th>公司</th>
+              <th>岗位</th>
               <th>进度</th>
-              <th>薪资</th>
               <th>投递日期</th>
-              <th>渠道</th>
-              <th>备注 / 链接</th>
+              <th>薪资</th>
+              <th>备注</th>
+              <th>链接</th>
+              <th>简历</th>
               <th></th>
             </tr>
           </thead>
           <tbody id="trackerBody"></tbody>
         </table>
-        <div class="empty" id="trackerEmpty">还没有记录。导出简历后会自动登记一条，也可以点「+ 新增投递」。</div>
+        <div class="empty" id="trackerEmpty">暂无投递记录</div>
       </div>
     </div>
   </main>
@@ -1575,16 +1691,12 @@ details.readonly summary { font-weight: 600; }
         <select class="input" id="trStatus"></select>
       </label>
       <label>
-        <span class="field-label">薪资</span>
-        <input class="input" id="trSalary" placeholder="例如：25k×14 / 30–35w" autocomplete="off">
-      </label>
-      <label>
         <span class="field-label">投递日期</span>
         <input class="input" id="trDate" type="date">
       </label>
       <label>
-        <span class="field-label">渠道</span>
-        <input class="input" id="trChannel" placeholder="官网 / Boss / 内推" autocomplete="off">
+        <span class="field-label">薪资</span>
+        <input class="input" id="trSalary" placeholder="例如：25k×14 / 30–35w" autocomplete="off">
       </label>
       <label style="grid-column:1/-1">
         <span class="field-label">工作来源链接</span>
@@ -2556,8 +2668,8 @@ details.readonly summary { font-weight: 600; }
 </script>
 <script>
 /*
- * 投递跟踪：记录公司 / 岗位 / 进度（几面）/ 薪资 / 日期 / 渠道 / 备注。
- * 数据只存在当前浏览器 localStorage，可通过 CSV 导出备份 / 导入恢复。
+ * 投递跟踪：记录公司 / 岗位 / 进度（几面）/ 日期 / 薪资 / 备注 / 链接 / 简历路径。
+ * 本机版自动存 其他/投递跟踪.csv；静态版回退到浏览器 localStorage。
  */
 (function (global) {
   'use strict';
@@ -2618,9 +2730,9 @@ details.readonly summary { font-weight: 600; }
       status: STATUS_MAP[rec.status] ? rec.status : 'applied',
       salary: text(rec.salary),
       date: text(rec.date),
-      channel: text(rec.channel),
       link: normalizeLink(rec.link),
       note: text(rec.note),
+      resume: text(rec.resume),
       updatedAt: text(rec.updatedAt) || now()
     };
   }
@@ -2686,18 +2798,18 @@ details.readonly summary { font-weight: 600; }
   }
 
   function toCsv(list) {
-    var header = ['公司', '岗位', '进度', '薪资', '投递日期', '渠道', '链接', '备注', '更新时间'];
+    var header = ['公司', '岗位', '进度', '投递日期', '薪资', '备注', '链接', '简历', '更新时间'];
     var lines = [header.map(csvEscape).join(',')];
     list.forEach(function (r) {
       lines.push([
         r.company,
         r.position,
         statusInfo(r.status).label,
-        r.salary,
         r.date,
-        r.channel,
-        r.link,
+        r.salary,
         r.note,
+        r.link,
+        r.resume,
         r.updatedAt
       ].map(csvEscape).join(','));
     });
@@ -2765,9 +2877,9 @@ details.readonly summary { font-weight: 600; }
         status: labelToId[statusText] || 'applied',
         salary: get(cells, ['薪资', 'salary']),
         date: get(cells, ['投递日期', '日期', 'date']),
-        channel: get(cells, ['渠道', 'channel']),
         link: get(cells, ['链接', 'link']),
         note: get(cells, ['备注', 'note']),
+        resume: get(cells, ['简历', '简历路径', 'resume']),
         updatedAt: get(cells, ['更新时间', 'updatedAt'])
       });
     }).filter(Boolean);
@@ -2806,8 +2918,8 @@ details.readonly summary { font-weight: 600; }
 
   function cache() {
     ['trackerView', 'trackerStats', 'trackerSearch', 'trackerFilter', 'trackerAdd', 'trackerExport', 'trackerImage',
-      'trackerImport', 'trackerStatus', 'trackerBody', 'trackerEmpty', 'trackerModal', 'trackerModalTitle',
-      'trCompany', 'trPosition', 'trStatus', 'trSalary', 'trDate', 'trChannel', 'trLink', 'trNote',
+      'trackerStatus', 'trackerBody', 'trackerEmpty', 'trackerModal', 'trackerModalTitle',
+      'trCompany', 'trPosition', 'trStatus', 'trSalary', 'trDate', 'trLink', 'trNote',
       'trackerSave', 'trackerCancel', 'trackerDelete', 'trackerClose', 'trackerFormMsg', 'trackerBadge'].forEach(function (id) {
       els[id] = document.getElementById(id);
     });
@@ -2817,6 +2929,37 @@ details.readonly summary { font-weight: 600; }
     if (!els.trackerStatus) return;
     els.trackerStatus.textContent = text || '';
     els.trackerStatus.className = 'hint' + (kind ? ' ' + kind : '');
+  }
+
+  function saveTracker(list) {
+    T.save(list);
+    pushRemote(list);
+  }
+
+  function pushRemote(list) {
+    try {
+      fetch('api/tracker', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ csv: T.toCsv(list) })
+      }).catch(function () { /* 静态版没有接口 */ });
+    } catch (e) { /* 忽略 */ }
+  }
+
+  async function hydrateRemote() {
+    try {
+      var res = await fetch('api/tracker', { cache: 'no-store' });
+      if (!res.ok) return;
+      var data = await res.json();
+      if (data && data.exists) {
+        var list = T.parseCsv(data.csv || '');
+        T.save(list);
+        render();
+      } else {
+        var local = T.load();
+        if (local.length) pushRemote(local);
+      }
+    } catch (e) { /* 静态版或本机服务未启动 */ }
   }
 
   function sorted(list) {
@@ -2875,6 +3018,44 @@ details.readonly summary { font-weight: 600; }
     return b;
   }
 
+  function statusSelect(rec) {
+    var sel = document.createElement('select');
+    sel.className = 'tracker-status-select status-' + T.statusInfo(rec.status).group;
+    T.STATUSES.forEach(function (s) {
+      var opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = s.label;
+      sel.appendChild(opt);
+    });
+    sel.value = rec.status;
+    sel.addEventListener('change', function () { updateStatus(rec.id, sel.value); });
+    return sel;
+  }
+
+  function updateStatus(id, status) {
+    var list = T.load().map(function (r) {
+      if (r.id !== id) return r;
+      return T.normalize(Object.assign({}, r, { status: status, updatedAt: T.now() }));
+    });
+    saveTracker(list);
+    render();
+    setStatus('已更新进度：' + T.statusInfo(status).label, 'ok');
+  }
+
+  function revealResume(path) {
+    fetch('api/reveal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path: path })
+    }).then(function (res) {
+      return res.json().catch(function () { return { ok: false }; });
+    }).then(function (data) {
+      if (!data || !data.ok) setStatus('静态版不能打开本地文件夹；本机版可以。', 'error');
+    }).catch(function () {
+      setStatus('静态版不能打开本地文件夹；本机版可以。', 'error');
+    });
+  }
+
   function render() {
     if (!els.trackerBody) return;
     var all = sorted(T.load());
@@ -2885,54 +3066,65 @@ details.readonly summary { font-weight: 600; }
       var group = T.statusInfo(r.status).group;
       if (filter !== 'all' && filter !== group) return false;
       if (!q) return true;
-      return [r.company, r.position, r.salary, r.channel, r.note].join(' ').toLowerCase().indexOf(q) >= 0;
+      return [r.company, r.position, r.salary, r.link, r.note].join(' ').toLowerCase().indexOf(q) >= 0;
     });
 
     els.trackerBody.innerHTML = '';
     rows.forEach(function (r) {
       var tr = document.createElement('tr');
 
-      var tdMain = document.createElement('td');
+      var tdCompany = document.createElement('td');
       var strong = document.createElement('div');
       strong.className = 'tr-company';
       strong.textContent = r.company || '（未填公司）';
-      var sub = document.createElement('div');
-      sub.className = 'tr-position';
-      sub.textContent = r.position || '';
-      tdMain.appendChild(strong);
-      tdMain.appendChild(sub);
-      tr.appendChild(tdMain);
+      tdCompany.appendChild(strong);
+      tr.appendChild(tdCompany);
+
+      var tdPosition = document.createElement('td');
+      var pos = document.createElement('div');
+      pos.className = 'tr-position';
+      pos.textContent = r.position || '—';
+      tdPosition.appendChild(pos);
+      tr.appendChild(tdPosition);
 
       var tdStatus = document.createElement('td');
-      tdStatus.appendChild(statusBadge(r.status));
+      tdStatus.appendChild(statusSelect(r));
       tr.appendChild(tdStatus);
 
-      tr.appendChild(cellText(r.salary));
       tr.appendChild(cellText(r.date));
-      tr.appendChild(cellText(r.channel));
+      tr.appendChild(cellText(r.salary));
 
       var tdNote = document.createElement('td');
       tdNote.className = 'tr-note';
-      if (r.note) {
-        var note = document.createElement('div');
-        note.textContent = r.note;
-        tdNote.appendChild(note);
-      }
+      tdNote.textContent = r.note || '—';
+      tr.appendChild(tdNote);
+
+      var tdLink = document.createElement('td');
+      tdLink.className = 'tr-link';
       if (r.link) {
         var a = document.createElement('a');
         a.href = r.link;
         a.target = '_blank';
         a.rel = 'noopener';
-        a.textContent = r.link.replace(/^https?:\/\//, '').slice(0, 42);
-        tdNote.appendChild(a);
+        a.textContent = r.link.replace(/^https?:\/\//, '').slice(0, 38);
+        tdLink.appendChild(a);
       } else {
-        var missingLink = document.createElement('span');
-        missingLink.className = 'missing-link';
-        missingLink.textContent = '缺工作来源链接';
-        tdNote.appendChild(missingLink);
+        tdLink.textContent = '—';
       }
-      if (!r.note && !r.link) tdNote.textContent = '缺工作来源链接';
-      tr.appendChild(tdNote);
+      tr.appendChild(tdLink);
+
+      var tdResume = document.createElement('td');
+      if (r.resume) {
+        var resumeBtn = document.createElement('button');
+        resumeBtn.type = 'button';
+        resumeBtn.className = 'btn small resume-open';
+        resumeBtn.textContent = '打开文件夹';
+        resumeBtn.addEventListener('click', function () { revealResume(r.resume); });
+        tdResume.appendChild(resumeBtn);
+      } else {
+        tdResume.textContent = '—';
+      }
+      tr.appendChild(tdResume);
 
       var tdActions = document.createElement('td');
       tdActions.className = 'tr-actions';
@@ -2945,19 +3137,10 @@ details.readonly summary { font-weight: 600; }
 
     lastRows = rows;
     els.trackerEmpty.hidden = rows.length > 0;
-    var missing = all.filter(function (r) { return !r.link; }).length;
-    if (missing) {
-      setStatus('共 ' + all.length + ' 条记录（公司 ' + T.stats(all).companies + ' 家）· ' + missing + ' 条缺工作来源链接，点「编辑」补上。', 'warn');
-    }
     var badge = document.getElementById('trackerBadge');
     if (badge) {
       badge.textContent = String(all.length);
       badge.hidden = all.length === 0;
-    }
-    if (!missing) {
-      setStatus(rows.length === all.length
-        ? '共 ' + all.length + ' 条记录（公司 ' + T.stats(all).companies + ' 家）'
-        : '筛选出 ' + rows.length + ' 条 / 共 ' + all.length + ' 条', '');
     }
   }
 
@@ -2985,7 +3168,6 @@ details.readonly summary { font-weight: 600; }
     els.trStatus.value = 'applied';
     els.trSalary.value = '';
     els.trDate.value = T.today();
-    els.trChannel.value = '';
     els.trLink.value = '';
     els.trNote.value = '';
     els.trackerFormMsg.textContent = '';
@@ -3009,7 +3191,6 @@ details.readonly summary { font-weight: 600; }
     els.trStatus.value = rec.status;
     els.trSalary.value = rec.salary;
     els.trDate.value = rec.date;
-    els.trChannel.value = rec.channel;
     els.trLink.value = rec.link;
     els.trNote.value = rec.note;
     els.trackerModalTitle.textContent = '编辑投递';
@@ -3029,7 +3210,6 @@ details.readonly summary { font-weight: 600; }
       status: els.trStatus.value,
       salary: els.trSalary.value.trim(),
       date: els.trDate.value,
-      channel: els.trChannel.value.trim(),
       link: els.trLink.value.trim(),
       note: els.trNote.value.trim()
     };
@@ -3067,17 +3247,17 @@ details.readonly summary { font-weight: 600; }
     } else {
       list.push(T.normalize(Object.assign({}, data, { updatedAt: T.now() })));
     }
-    T.save(list);
+    saveTracker(list);
     closeModal();
     render();
-    setStatus('已保存，共 ' + T.load().length + ' 条记录。', 'ok');
+    setStatus('已保存。', 'ok');
   }
 
   function remove(id) {
     var rec = T.load().filter(function (r) { return r.id === id; })[0];
     if (!rec) return;
     if (!window.confirm('删除「' + recordTitle(rec) + '」这条记录？')) return;
-    T.save(T.load().filter(function (r) { return r.id !== id; }));
+    saveTracker(T.load().filter(function (r) { return r.id !== id; }));
     render();
     setStatus('已删除一条记录。', 'ok');
   }
@@ -3186,8 +3366,8 @@ details.readonly summary { font-weight: 600; }
     var tableY = top + 178;
     ctx.fillStyle = '#59636e';
     ctx.font = '500 12px -apple-system, "PingFang SC", sans-serif';
-    var cols = [0, 250, 345, 460, 570, 665];
-    var heads = ['公司 / 岗位', '进度', '薪资', '投递日期', '渠道', '备注 / 链接'];
+    var cols = [0, 250, 345, 460, 570];
+    var heads = ['公司 / 岗位', '进度', '投递日期', '薪资', '备注 / 链接'];
     heads.forEach(function (h, i) {
       ctx.fillText(h, left + cols[i], tableY);
     });
@@ -3208,7 +3388,7 @@ details.readonly summary { font-weight: 600; }
       ctx.fillText(fitText(ctx, r.position || '', 220), left + cols[0], y + 19);
 
       var info = T.statusInfo(r.status);
-      ctx.fillStyle = info.group === 'interview' ? '#8250df' : info.group === 'offer' ? '#0969da' : info.group === 'closed' ? '#8c959f' : '#1f6feb';
+      ctx.fillStyle = info.group === 'interview' ? '#8250df' : info.group === 'closed' ? '#8c959f' : '#1a7f37';
       ctx.beginPath();
       ctx.arc(left + cols[1] + 3, y - 4, 3, 0, Math.PI * 2);
       ctx.fill();
@@ -3218,17 +3398,16 @@ details.readonly summary { font-weight: 600; }
 
       ctx.fillStyle = '#1f2328';
       ctx.font = '400 13px -apple-system, "PingFang SC", sans-serif';
-      ctx.fillText(fitText(ctx, r.salary || '—', 95), left + cols[2], y);
-      ctx.fillText(fitText(ctx, r.date || '—', 95), left + cols[3], y);
-      ctx.fillText(fitText(ctx, r.channel || '—', 80), left + cols[4], y);
+      ctx.fillText(fitText(ctx, r.date || '—', 95), left + cols[2], y);
+      ctx.fillText(fitText(ctx, r.salary || '—', 95), left + cols[3], y);
 
       ctx.fillStyle = '#59636e';
       ctx.font = '400 12px -apple-system, "PingFang SC", sans-serif';
-      ctx.fillText(fitText(ctx, r.note || '—', 330), left + cols[5], y);
+      ctx.fillText(fitText(ctx, r.note || '—', 470), left + cols[4], y);
       if (r.link) {
         ctx.fillStyle = '#8c959f';
         ctx.font = '400 11px -apple-system, "PingFang SC", sans-serif';
-        ctx.fillText(fitText(ctx, r.link.replace(/^https?:\/\//, ''), 330), left + cols[5], y + 18);
+        ctx.fillText(fitText(ctx, r.link.replace(/^https?:\/\//, ''), 470), left + cols[4], y + 18);
       }
 
       ctx.strokeStyle = '#d8dee4';
@@ -3257,50 +3436,12 @@ details.readonly summary { font-weight: 600; }
     }, 'image/png');
   }
 
-  function importCsvFile(file) {
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function () {
-      try {
-        var parsedAll = T.parseCsv(String(reader.result || ''));
-        var parsed = parsedAll.filter(function (r) { return r.link; });
-        var skipped = parsedAll.length - parsed.length;
-        if (!parsed.length) {
-          setStatus('CSV 里没有带「工作来源链接」的记录，已全部跳过。', 'error');
-          return;
-        }
-        if (!window.confirm('导入 ' + parsed.length + ' 条带链接的记录？' + (skipped ? '另有 ' + skipped + ' 条缺链接会被跳过。' : '') + '公司+岗位相同的会更新，其余追加。')) return;
-        var list = T.load();
-        var map = {};
-        list.forEach(function (r) { map[(r.company + '|' + r.position).toLowerCase()] = r; });
-        var added = 0;
-        var updated = 0;
-        parsed.forEach(function (r) {
-          var key = (r.company + '|' + r.position).toLowerCase();
-          if (map[key]) {
-            Object.assign(map[key], r, { id: map[key].id, updatedAt: T.now() });
-            updated++;
-          } else {
-            list.push(r);
-            map[key] = r;
-            added++;
-          }
-        });
-        T.save(list);
-        render();
-        setStatus('导入完成：新增 ' + added + ' 条，更新 ' + updated + ' 条' + (skipped ? '；跳过 ' + skipped + ' 条缺链接记录' : '') + '。', '');
-      } catch (e) {
-        setStatus('导入失败：' + (e.message || e), 'error');
-      }
-    };
-    reader.readAsText(file, 'utf-8');
-  }
-
   /** 导出简历后自动登记（公司+岗位相同则只更新更新时间） */
-  function registerExport(company, position, link) {
+  function registerExport(company, position, link, resume) {
     company = String(company || '').trim();
     position = String(position || '').trim();
     link = T.normalizeLink ? T.normalizeLink(link) : String(link || '').trim();
+    resume = String(resume || '').trim();
     if (!company || !position || !link) return { ok: false, skipped: true };
     var list = T.load();
     var found = list.filter(function (r) {
@@ -3310,29 +3451,43 @@ details.readonly summary { font-weight: 600; }
       found.updatedAt = T.now();
       if (!found.date) found.date = T.today();
       if (!found.link) found.link = link;
+      if (resume) found.resume = resume;
     } else {
       list.push(T.normalize({
         company: company,
         position: position,
         status: 'applied',
         link: link,
+        resume: resume,
         date: T.today(),
         updatedAt: T.now()
       }));
     }
-    T.save(list);
+    saveTracker(list);
     render();
     return { ok: true, added: !found, skipped: false };
+  }
+
+  function attachResume(company, position, resume) {
+    resume = String(resume || '').trim();
+    if (!resume) return { ok: false };
+    var list = T.load();
+    var found = list.filter(function (r) {
+      return r.company.toLowerCase() === String(company || '').trim().toLowerCase()
+        && r.position.toLowerCase() === String(position || '').trim().toLowerCase();
+    })[0];
+    if (!found) return { ok: false };
+    found.resume = resume;
+    found.updatedAt = T.now();
+    saveTracker(list);
+    render();
+    return { ok: true };
   }
 
   function bind() {
     els.trackerAdd.addEventListener('click', openNew);
     els.trackerExport.addEventListener('click', exportCsv);
     if (els.trackerImage) els.trackerImage.addEventListener('click', exportImage);
-    els.trackerImport.addEventListener('change', function () {
-      importCsvFile(els.trackerImport.files && els.trackerImport.files[0]);
-      els.trackerImport.value = '';
-    });
     els.trackerSearch.addEventListener('input', render);
     els.trackerFilter.addEventListener('change', render);
     els.trackerSave.addEventListener('click', saveForm);
@@ -3358,12 +3513,14 @@ details.readonly summary { font-weight: 600; }
     fillStatusOptions();
     bind();
     render();
+    hydrateRemote();
   }
 
   global.ResumeTrackerApp = {
     init: init,
     refresh: render,
     registerExport: registerExport,
+    attachResume: attachResume,
     openNew: openNew
   };
 
@@ -3428,7 +3585,8 @@ details.readonly summary { font-weight: 600; }
     posAuto: { zh: true, en: true },
     candidates: { zh: {}, en: {} },
     choices: { zh: {}, en: {} },
-    aiSnapshot: null
+    aiSnapshot: null,
+    lastExport: null
   };
 
   var els = {};
@@ -4899,7 +5057,12 @@ details.readonly summary { font-weight: 600; }
         setStatus('投递跟踪还没有加载好，请刷新页面再试。', 'error');
         return;
       }
-      var res = window.ResumeTrackerApp.registerExport(n.company, n.position, source);
+      var resume = '';
+      if (state.lastExport && state.lastExport.htmlRel && state.lastExport.tplId === state.tplId
+          && state.lastExport.company === n.company && state.lastExport.position === n.position) {
+        resume = state.lastExport.htmlRel;
+      }
+      var res = window.ResumeTrackerApp.registerExport(n.company, n.position, source, resume);
       if (res && res.ok) {
         setStatus((res.added ? '已加入投递跟踪：' : '已在投递跟踪中，已更新时间：') + n.company + ' · ' + n.position
           + '\n可以切到「投递跟踪」补充面试进度和薪资。', 'ok');
@@ -4994,6 +5157,10 @@ details.readonly summary { font-weight: 600; }
       try { data = await res.json(); } catch (e) { data = null; }
       if (!res.ok || !data || !data.ok) {
         throw new Error((data && data.error) || ('HTTP ' + res.status));
+      }
+      state.lastExport = { tplId: state.tplId, company: n.company, position: n.position, htmlRel: data.htmlRel };
+      if (window.ResumeTrackerApp && window.ResumeTrackerApp.attachResume) {
+        window.ResumeTrackerApp.attachResume(n.company, n.position, data.htmlRel);
       }
       var lines = [];
       lines.push('已生成并归档 · ' + (data.pages || 1) + ' 页 · 缩放 ' + Math.round((data.scale || 1) * 1000) / 10 + '%');
@@ -5285,7 +5452,7 @@ details.readonly summary { font-weight: 600; }
     ['mainTabs', 'resumeView', 'trackerView', 'tplSwitch', 'modeBadge', 'btnExportTop', 'banner', 'company', 'position', 'jd', 'keywords', 'note', 'nameHint',
       'groups', 'baseInfoBody', 'actionsMain', 'status',
       'previewPane', 'previewWrap', 'scaleLabel', 'previewFrame', 'overflowFlag', 'pageShell',
-      'togglePreview', 'resetAll', 'copyShare', 'themeSelect', 'btnTrackTop', 'splitter',
+      'togglePreview', 'resetAll', 'copyShare', 'themeToggle', 'btnTrackTop', 'splitter',
       'matchSummary', 'kwChips', 'btnPrompt', 'promptModal', 'promptText', 'promptCopy', 'promptClose',
       'btnGenerate', 'btnAiSettings', 'btnUndo', 'aiStatus', 'generateStatus', 'pasteText', 'btnApplyPaste',
       'aiModal', 'aiEndpoint', 'aiModel', 'aiKey', 'aiSave', 'aiTest', 'aiClear', 'aiTestResult', 'aiClose', 'aiPreset', 'source'].forEach(function (id) {
@@ -5362,10 +5529,11 @@ details.readonly summary { font-weight: 600; }
       b.addEventListener('click', function () { switchView(b.dataset.view); });
     });
 
-    if (els.themeSelect) {
-      els.themeSelect.value = document.documentElement.getAttribute('data-theme-mode') || 'system';
-      els.themeSelect.addEventListener('change', function () {
-        if (window.__setThemeMode) window.__setThemeMode(els.themeSelect.value);
+    if (els.themeToggle) {
+      if (window.__syncThemeLabel) window.__syncThemeLabel();
+      els.themeToggle.addEventListener('click', function () {
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (window.__setThemeMode) window.__setThemeMode(dark ? 'light' : 'dark');
       });
     }
 
